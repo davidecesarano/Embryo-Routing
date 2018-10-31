@@ -1,0 +1,32 @@
+{
+    "name": "davidecesarano/embryo-routing",
+    "type": "library",
+    "description": "A PHP Router PSR compatible.",
+    "keywords": [
+        "router",
+        "routing",
+        "psr router"
+    ],
+    "homepage": "https://github.com/davidecesarano/embryo-routing",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Davide Cesarano",
+            "homepage": "https://github.com/davidecesarano"
+        }
+    ],
+    "require": {
+        "php": ">=7.1"
+    },
+    "require-dev": {
+        "davidecesarano/embryo-http": "dev-master",
+        "davidecesarano/embryo-container": "dev-master",
+        "davidecesarano/embryo-middleware": "dev-master",
+        "davidecesarano/embryo-emitter": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Embryo\\": "Embryo/"
+        }
+    }
+}
