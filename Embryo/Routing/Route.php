@@ -3,16 +3,21 @@
     /**
      * Route
      * 
-     * 
+     * @author Davide Cesarano <davide.cesarano@unipegaso.it>
+     * @link   https://github.com/davidecesarano/embryo-routing  
      */
 
     namespace Embryo\Routing;
     
     use Embryo\Routing\Interfaces\RouteInterface;
+    use Embryo\Routing\Traits\RouteMatchTrait;
+    use Embryo\Routing\Traits\RouteActionTrait;
     use Psr\Container\ContainerInterface;
     
     class Route implements RouteInterface
     {    
+        use RouteMatchTrait, RouteActionTrait;
+
         /**
          * @var string $basePath
          */
@@ -31,7 +36,7 @@
         /**
          * @var string $method
          */
-        private $method;
+        protected $method;
 
         /**
          * @var array $methods 
@@ -51,31 +56,31 @@
         /**
          * @var string $path
          */
-        private $routePath = '';
+        protected $routePath = '';
 
         /**
          * @var array $arguments 
          */
-        private $arguments = [];
+        protected $arguments = [];
 
         /**
          * @var string $uri
          */
-        private $uri;
+        protected $uri;
 
         /**
          * @var array $middleware 
          */
-        private $middleware = [];
+        protected $middleware = [];
 
         /**
          * @var string $name
          */
-        private $name;
+        protected $name;
 
         /**
          * ------------------------------------------------------------
-         * BASEPATH
+         * BASE PATH
          * ------------------------------------------------------------
          */
 
@@ -85,9 +90,9 @@
          * Default value is '/'. 
          * 
          * @param string $basePath 
-         * @return self
+         * @return RouteInterface
          */
-        public function withBasePath(string $basePath)
+        public function withBasePath(string $basePath): RouteInterface
         {
             $clone = clone $this;
             $clone->basePath = $basePath;
@@ -99,7 +104,7 @@
          * 
          * @return string
          */
-        public function getBasePath()
+        public function getBasePath(): string
         {
             return $this->basePath;
         }
@@ -116,9 +121,9 @@
          * Default value is empty string.
          * 
          * @param string $prefix 
-         * @return self
+         * @return RouteInterface
          */
-        public function withPrefix(string $prefix)
+        public function withPrefix(string $prefix): RouteInterface
         {
             $clone = clone $this;
             $clone->prefix = $prefix;
@@ -130,7 +135,7 @@
          *
          * @return string
          */
-        public function getPrefix()
+        public function getPrefix(): string
         {
             return $this->prefix;
         }
@@ -145,9 +150,9 @@
          * Returns an instance with the specified namespace.
          * 
          * @param string $namespace 
-         * @return self
+         * @return RouteInterface
          */
-        public function withNamespace(string $namespace)
+        public function withNamespace(string $namespace): RouteInterface
         {
             $clone = clone $this;
             $clone->namespace = $namespace;
@@ -159,7 +164,7 @@
          *
          * @return string
          */
-        public function getNamespace()
+        public function getNamespace(): string
         {
             return $this->namespace;
         }
@@ -175,9 +180,9 @@
          * for group route.
          * 
          * @param array $middleware 
-         * @return self
+         * @return RouteInterface
          */
-        public function withMiddleware(array $middleware)
+        public function withMiddleware(array $middleware): RouteInterface
         {
             $clone = clone $this;
             $clone->middleware = $middleware;
@@ -185,23 +190,11 @@
         }
 
         /**
-         * Sets one or more middleware for specific route.
-         *
-         * @param array $middleware
-         * @return self 
-         */
-        public function middleware(...$middleware)
-        {
-            $this->middleware = array_merge($this->middleware, $middleware);
-            return $this;
-        }
-
-        /**
          * Returns middleware.
          *
          * @return array
          */
-        public function getMiddleware()
+        public function getMiddleware(): array
         {
             return $this->middleware;
         }
@@ -216,9 +209,9 @@
          * Returns an instance with the specified methods.
          *
          * @param array $methods
-         * @return self
+         * @return RouteInterface
          */
-        public function withMethods(array $methods)
+        public function withMethods(array $methods): RouteInterface
         {
             $clone = clone $this;
             $clone->methods = $methods;
@@ -226,23 +219,11 @@
         }
 
         /**
-         * Sets method.
-         * 
-         * @param string $method
-         * @return self
-         */
-        private function setMethod(string $method)
-        {
-            $this->method = $method;
-            return $this;
-        }
-
-        /**
          * Returns methods.
          * 
          * @return array
          */
-        public function getMethods()
+        public function getMethods(): array
         {
             return $this->methods;
         }
@@ -252,7 +233,7 @@
          * 
          * @return string
          */
-        public function getMethod()
+        public function getMethod(): string
         {
             return $this->method;
         }
@@ -267,9 +248,9 @@
          * Returns an instance with the specified pattern route.
          *
          * @param string $pattern
-         * @return self
+         * @return RouteInterface
          */
-        public function withPattern(string $pattern)
+        public function withPattern(string $pattern): RouteInterface
         {
             $clone = clone $this;
             $clone->pattern = $pattern;
@@ -281,7 +262,7 @@
          * 
          * @return string
          */
-        public function getPattern()
+        public function getPattern(): string
         {
             return $this->pattern;
         }
@@ -296,9 +277,10 @@
          * Returns an instance with the specified callback.
          *
          * @param string|callable $callback
-         * @return self
+         * @return RouteInterface
+         * @throws InvalidArgumentException
          */
-        public function withCallback($callback)
+        public function withCallback($callback): RouteInterface
         {
             if (!is_string($callback) && !is_callable($callback)) {
                 throw new \InvalidArgumentException('The callback route must be a string!');
@@ -321,123 +303,18 @@
 
         /**
          * ------------------------------------------------------------
-         * PATH
+         * ROUTE PATH
          * ------------------------------------------------------------
          */
-
-        /**
-         * Sets route path.
-         *
-         * @param string $routePath
-         * @return self
-         */
-        public function setRoutePath(string $routePath)
-        {
-            $this->routePath = $routePath;
-            return $this;
-        }
 
         /**
          * Returns route path.
          *
          * @return string
          */
-        public function getRoutePath()
+        public function getRoutePath(): string
         {
             return $this->routePath;
-        }
-
-        /**
-         * Composes route path.
-         * 
-         * This method combines the basePath, prefix and route pattern
-         * for the composition of the route path.
-         * 
-         * @return string
-         */
-        private function composeRoutePath()
-        {
-            $basePath  = $this->getBasePath();
-            $prefix    = $this->getPrefix();
-            $pattern   = $this->getPattern();
-
-            $basePath  = ($basePath === '/') ? '' : $basePath;
-            $routePath = ($prefix !== '') ? $basePath.$prefix.$pattern : $basePath.$pattern;
-            $routePath = rtrim($routePath, '/');   
-            return $routePath;
-        }
-
-        /**
-         * ------------------------------------------------------------
-         * ARGUMENTS
-         * ------------------------------------------------------------
-         */
-
-        /**
-         * Sets specific regex for arguments.
-         *
-         * @param string|array $name 
-         * @param string|null $regex
-         * @return self 
-         */
-        public function where($name, $regex = null)
-        {
-            if (is_string($name) && is_string($regex)) {
-                $this->arguments[$name] = $regex;
-            }
-
-            if (is_array($name)) {
-                foreach ($name as $key => $value) {
-                    $this->arguments[$key] = $value;
-                }
-            }
-            return $this;
-        }
-
-        /**
-         * Sets arguments.
-         *
-         * @param array $params
-         * @param string $path
-         * @return void
-         */
-        private function setArguments(array $params, string $path)
-        {
-            $params = array_slice($params, 1);
-            if (!empty($params)) {
-
-                preg_match_all('#({\w+}|\[\/{\w+}\])#', $path, $names);
-
-                $keys = [];
-                foreach($names[0] as $name) {
-                    $name = str_replace('{', '', $name);
-                    $name = str_replace('}', '', $name);
-                    $name = str_replace('?', '', $name);
-                    $name = str_replace('/', '', $name);
-                    $name = str_replace('[', '', $name);
-                    $name = str_replace(']', '', $name);
-                    $keys[] = $name;
-                }
-                
-                $values = [];
-                foreach ($keys as $k => $v) {
-                    $values[$k] = (!isset($params[$k])) ? null : ltrim($params[$k], '/');
-                }
-
-                $this->arguments = array_combine($keys, $values);
-                return $this;
-
-            }
-        }
-
-        /**
-         * Return arguments.
-         * 
-         * @return array
-         */
-        public function getArguments()
-        {
-            return $this->arguments;
         }
 
         /**
@@ -447,43 +324,40 @@
          */
 
         /**
-         * Sets name of specific route.
-         *
-         * @param string $name
-         * @return self
-         */
-        public function name(string $name)
-        {
-            $this->name = $name;
-            return $this;
-        }
-
-        /**
          * Returns name.
          * 
          * @return string
          */
-        public function getName()
+        public function getName(): string
         {
             return $this->name;
         }
-
+        
         /**
          * ------------------------------------------------------------
          * URI
          * ------------------------------------------------------------
          */
 
-        /**
-         * Sets uri.
-         *
-         * @param string $uri
-         * @return self
-         */
-        private function setUri(string $uri)
+        public function getUri(): string
         {
-            $this->uri = $uri;
-            return $this;
+            return $this->uri;
+        }
+
+        /**
+         * ------------------------------------------------------------
+         * ARGUMENTS
+         * ------------------------------------------------------------
+         */
+
+        /**
+         * Return arguments.
+         * 
+         * @return array
+         */
+        public function getArguments(): array
+        {
+            return $this->arguments;
         }
 
         /**
@@ -522,39 +396,5 @@
             } else { 
                 return false;
             }
-        }
-
-        /**
-         * Returns the route regex path.
-         * 
-         * If route doesn not specify the arguments with where() method, 
-         * the arguments array is empty and function return the
-         * 'digit' regex (\w+).
-         * 
-         * @param string $path
-         * @return string
-         * @throws InvalidArgumentException
-         */
-        private function getRouteRegexPath(string $path): string
-        {
-            $arguments = $this->getArguments();
-            return preg_replace_callback('#({\w+}|\[\/{\w+}\])#', function($params) use($arguments){
-                
-                $name = str_replace('{', '', $params[0]);
-                $name = str_replace('}', '', $name);
-                $name = str_replace('?', '', $name);
-                $name = str_replace('/', '', $name);
-                $name = str_replace('[', '', $name);
-                $name = str_replace(']', '', $name);
-                
-                if (preg_match('#\[\/{\w+}\]#', $params[0])) {
-                    return '(\/[\w]+)?';
-                } else if (preg_match('#{\w+}#', $params[0])) {
-                    return (isset($arguments[$name])) ? '('.$arguments[$name].')' : '(\w+)';
-                } else {
-                    throw new \InvalidArgumentException('Format route path not valid!');
-                }
-
-            }, $path);
         }
     }

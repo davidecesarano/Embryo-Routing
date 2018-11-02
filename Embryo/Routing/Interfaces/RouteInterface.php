@@ -2,33 +2,33 @@
 
     /**
      * RouteInterface
+     * 
+     * @author Davide Cesarano <davide.cesarano@unipegaso.it>
+     * @link   https://github.com/davidecesarano/embryo-routing 
      */
     
     namespace Embryo\Routing\Interfaces;
 
     interface RouteInterface
     {
-        public function withBasePath(string $basePath);
-        public function getBasePath();
-        public function withPrefix(string $prefix);
-        public function getPrefix();
-        public function withNamespace(string $namespace);
-        public function getNamespace();
-        public function withMiddleware(array $middleware);
-        public function middleware(...$middleware);
-        public function getMiddleware();
-        public function withMethods(array $methods);
-        public function getMethods();
-        public function getMethod();
-        public function withPattern(string $pattern);
-        public function getPattern();
-        public function withCallback($callback);
+        public function withBasePath(string $basePath): RouteInterface;
+        public function getBasePath(): string;
+        public function withPrefix(string $prefix): RouteInterface;
+        public function getPrefix(): string;
+        public function withNamespace(string $namespace): RouteInterface;
+        public function getNamespace(): string;
+        public function withMiddleware(array $middleware): RouteInterface;
+        public function getMiddleware(): array;
+        public function withMethods(array $methods): RouteInterface;
+        public function getMethods(): array;
+        public function getMethod(): string;
+        public function withPattern(string $pattern): RouteInterface;
+        public function getPattern(): string;
+        public function withCallback($callback): RouteInterface;
         public function getCallback();
-        public function setRoutePath(string $path);
-        public function getRoutePath();
-        public function where($name, $regex);        
-        public function getArguments();
-        public function name(string $name);
-        public function getName();
+        public function getRoutePath(): string;
+        public function getName(): string; 
+        public function getUri(): string;     
+        public function getArguments(): array;      
         public function match(string $uri, string $method);
     }
