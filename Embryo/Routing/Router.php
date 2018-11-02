@@ -51,24 +51,24 @@
         private $middleware = []; 
 
         /**
-         * Sets base path.
+         * Set base path.
          * 
          * @param string $basePath
-         * @return self
+         * @return RouterInterface
          */
-        public function setBasePath($basePath)
+        public function setBasePath($basePath): RouterInterface
         {
             $this->basePath = $basePath;
             return $this;
         }
 
         /**
-         * Sets namespace for controller.
+         * Set namespace for controller.
          * 
          * @param string $namespace
-         * @return self
+         * @return RouterInterface
          */
-        public function setNamespace(string $namespace)
+        public function setNamespace(string $namespace): RouterInterface
         {
             $this->namespace = $namespace;
             return $this;
@@ -81,7 +81,7 @@
          * @param mixed $callback
          * @return RouteInterface
          */
-        public function get($pattern, $callback): RouteInterface
+        public function get(string $pattern, $callback): RouteInterface
         {
             return $this->add(['GET'], $pattern, $callback);
         }
@@ -93,7 +93,7 @@
          * @param mixed $callback
          * @return RouteInterface
          */
-        public function post($pattern, $callback): RouteInterface
+        public function post(string $pattern, $callback): RouteInterface
         {
             return $this->add(['POST'], $pattern, $callback);
         }
@@ -105,7 +105,7 @@
          * @param mixed $callback
          * @return RouteInterface
          */
-        public function put($pattern, $callback): RouteInterface
+        public function put(string $pattern, $callback): RouteInterface
         {
             return $this->add(['PUT'], $pattern, $callback);
         }
@@ -117,7 +117,7 @@
          * @param mixed $callback
          * @return RouteInterface
          */
-        public function patch($pattern, $callback): RouteInterface
+        public function patch(string $pattern, $callback): RouteInterface
         {
             return $this->add(['PATCH'], $pattern, $callback);
         }
@@ -129,7 +129,7 @@
          * @param mixed $callback
          * @return RouteInterface
          */
-        public function delete($pattern, $callback): RouteInterface
+        public function delete(string $pattern, $callback): RouteInterface
         {
             return $this->add(['DELETE'], $pattern, $callback);
         }
@@ -141,67 +141,67 @@
          * @param mixed $callback
          * @return RouteInterface
          */
-        public function options($pattern, $callback): RouteInterface
+        public function options(string $pattern, $callback): RouteInterface
         {
             return $this->add(['OPTIONS'], $pattern, $callback);
         }
 
         /**
-         * Maps route with specific HTTP methods.
+         * Map route with specific HTTP methods.
          *
          * @param array $methdos
          * @param string $pattern
          * @param mixed $callback
          * @return RouteInterface
          */
-        public function map(array $methods, $pattern, $callback): RouteInterface
+        public function map(array $methods, string $pattern, $callback): RouteInterface
         {
             return $this->add($methods, $pattern, $callback);
         }
         
         /**
-         * Creates route with all HTTP methods.
+         * Create route with all HTTP methods.
          *
          * @param string $pattern
          * @param mixed $callback
          * @return RouteInterface
          */
-        public function all($pattern, $callback): RouteInterface
+        public function all(string $pattern, $callback): RouteInterface
         {
             return $this->add(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], $pattern, $callback);            
         }
 
         /**
-         * Sets one or more middleware for group routes.
+         * Set one or more middleware for group routes.
          *
          * @param array $middleware
-         * @return self
+         * @return RouterInterface
          */
-        public function middleware(array $middleware)
+        public function middleware(array $middleware): RouterInterface
         {
             $this->middleware = $middleware;
             return $this;
         }
 
         /**
-         * Sets prefix for group routes.
+         * Set prefix for group routes.
          *
          * @param string $prefix
-         * @return self
+         * @return RouterInterface
          */
-        public function prefix(string $prefix)
+        public function prefix(string $prefix): RouterInterface
         {
             $this->prefix = $prefix;
             return $this;
         }
 
         /**
-         * Creates routes into logical group.
+         * Create routes into logical group.
          *
          * @param callable $callback
-         * @return self
+         * @return RouterInterface
          */
-        public function group(callable $callback)
+        public function group(callable $callback): RouterInterface
         {
             call_user_func($callback, $this);
             $this->prefix = '';
@@ -210,12 +210,12 @@
         }
 
         /**
-         * Creates a route that redirect GET HTTP request to a 
+         * Create a route that redirect GET HTTP request to a 
          * different url. 
          *
          * @param string $pattern
          * @param string $location
-         * @param integer $code
+         * @param int $code
          */
         public function redirect(string $pattern, string $location, int $code = 302)
         {
@@ -226,7 +226,7 @@
         }
 
         /**
-         * Creates route.
+         * Create route.
          *
          * @param array $methods
          * @param string $pattern
@@ -253,7 +253,7 @@
         /** 
          * Dispatcher.
          * 
-         * Finds the route, starts dispatcher and returns
+         * Find the route, start dispatcher and return
          * a route object if find it.
          * 
          * @param ServerRequestInterface $request
