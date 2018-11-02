@@ -1,10 +1,11 @@
-# Embryo-Routing
+# Embryo-Routing [under construction]
 A fast and PSR compatible PHP Router.
+
+Under construction...
 
 # Features
 * PSR compatible
 * Static, dynamic and optional route patterns
-* 
 
 # Reruirements
 * PHP >= 7.1
