@@ -27,7 +27,6 @@
     });
 
     $middleware = new MiddlewareDispatcher;
-    //$middleware->add(new Embryo\Routing\Middleware\TrailingSlashMiddleware);
     $middleware->add(new Embryo\Routing\Middleware\MethodOverrideMiddleware);
     $middleware->add(new Embryo\Routing\Middleware\RoutingMiddleware($router));
     $middleware->add(new Embryo\Routing\Middleware\RequestHandlerMiddleware($container));
