@@ -1,4 +1,4 @@
-# Embryo-Routing
+# Embryo Routing
 A lightweight, fast and PSR compatible PHP Router.
 
 # Features
