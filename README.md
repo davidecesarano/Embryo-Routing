@@ -23,6 +23,8 @@ $ composer require davidecesarano/embryo-routing
 ```
 
 # Usage
+
+## Example
 Before defining the application routes, it is necessary to create an instance of the `Container`, the `ServerRequest` and the `Response`.
 ```php
 use Embryo\Container\Container;
@@ -54,18 +56,33 @@ Finally you can produce output of the Response with Emitter object.
 $emitter = new Emitter;
 $emitter->emit($response);
 ```
+You may quickly test this using the built-in PHP server:
+```
+$ php -S localhost:8000
+```
+Going to http://localhost:8000 will now display "Hello World!".
 
-# Create routes
-...
+## Create routes
+You can define application routes using methods on the Router object. Every method accepts two arguments:
+* The route pattern (with optional placeholders)
+* The route callback (a clousure or a `class@method` string)
+```php
+// GET Route
+$router->get('/blog/{id}', function($request, $response, $id) {
+    return $response->write('This is post with id '.$id);
+}
+```
+Embryo Routing supports GET, POST, PUT, PATCH, DELETE and OPTIONS request methods. Every request method corresponds to a method of the Router class: get(), post(), put(), patch(), delete(), options().
+## Callbacks
 
-# Callbacks
+## Placeholders
 
-# Placeholders
+## Add middleware to route
 
-# Add middleware to route
+## Set name route
 
-# Set name route
+## Create route groups
 
-# Create route groups
+## Resolve via Container
 
-# Resolve via Container
+## Working in subfolder
