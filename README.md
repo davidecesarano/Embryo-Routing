@@ -54,3 +54,18 @@ Finally you can produce output of the Response with Emitter object.
 $emitter = new Emitter;
 $emitter->emit($response);
 ```
+
+# Create routes
+...
+
+# Callbacks
+
+# Placeholders
+
+# Add middleware to route
+
+# Set name route
+
+# Create route groups
+
+# Resolve via Container
