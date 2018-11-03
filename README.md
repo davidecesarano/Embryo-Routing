@@ -23,4 +23,34 @@ $ composer require davidecesarano/embryo-routing
 ```
 
 # Usage
-Coming soon...
+Before defining the application routes, it is necessary to create an instance of the `Container`, the `ServerRequest` and the `Response`.
+```php
+use Embryo\Container\Container;
+use Embryo\Http\Emitter\Emitter;
+use Embryo\Http\Factory\ServerRequestFactory;
+use Embryo\Http\Factory\ResponseFactory;
+use Embryo\Http\Server\MiddlewareDispatcher;
+use Embryo\Routing\Router;
+
+$container  = new Container;
+$request    = (new ServerRequestFactory)->createServerRequestFromServer();
+$response   = (new ResponseFactory)->createResponse(200);
+```
+Later you can define the routes with `Router` object and add the `Middleware` to the dispatcher.
+```php
+$router = new Router;
+$router->get('/', function($request, $response){
+    return $response->write('Hello World!');
+});
+
+$middleware = new MiddlewareDispatcher;
+$middleware->add(new Embryo\Routing\Middleware\MethodOverrideMiddleware);
+$middleware->add(new Embryo\Routing\Middleware\RoutingMiddleware($router));
+$middleware->add(new Embryo\Routing\Middleware\RequestHandlerMiddleware($container));
+$response = $middleware->dispatch($request, $response);
+```
+Finally you can produce output of the Response with Emitter object.
+```php
+$emitter = new Emitter;
+$emitter->emit($response);
+```
