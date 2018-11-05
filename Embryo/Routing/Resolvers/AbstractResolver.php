@@ -79,7 +79,8 @@
                     $response = (new ResponseFactory)->createResponse(200);
                     $response = $response->withHeader('Content-Type', 'application/json;charset=utf-8');
                     $response = $response->write(json_encode($return));
-
+                    return $response;
+                    
                 } else {
                     throw new \UnexpectedValueException(
                         'The value returned must be scalar, array or an object with __toString method'
