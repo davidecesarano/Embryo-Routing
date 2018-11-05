@@ -55,7 +55,7 @@
                 $name = str_replace(']', '', $name);
                 
                 if (preg_match('#\[\/{\w+}\]#', $params[0])) {
-                    return '(\/[\w]+)?';
+                    return (isset($arguments[$name])) ? '('.$arguments[$name].')?' : '(\/[\w]+)?';
                 } else if (preg_match('#{\w+}#', $params[0])) {
                     return (isset($arguments[$name])) ? '('.$arguments[$name].')' : '(\w+)';
                 } else {
@@ -133,6 +133,8 @@
 
                 $this->arguments = array_combine($keys, $values);
 
+            } else {
+                $this->arguments = [];
             }
             return $this;
         }
