@@ -58,6 +58,7 @@ $emitter->emit($response);
 ```
 You may quickly test this using the built-in PHP server:
 ```
+$ cd example
 $ php -S localhost:8000
 ```
 Going to http://localhost:8000 will now display "Hello World!".
