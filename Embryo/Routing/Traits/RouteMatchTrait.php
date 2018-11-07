@@ -138,4 +138,16 @@
             }
             return $this;
         }
+
+        /**
+         * Set status code.
+         *
+         * @param int $code
+         * @return self
+         */
+        protected function setStatus(int $code): self
+        {
+            $this->status = $code;
+            return $this;
+        }
     }

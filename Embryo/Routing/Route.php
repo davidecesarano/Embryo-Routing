@@ -12,7 +12,6 @@
     use Embryo\Routing\Interfaces\RouteInterface;
     use Embryo\Routing\Traits\RouteActionTrait;
     use Embryo\Routing\Traits\RouteMatchTrait;
-    use Embryo\Routing\Traits\RouteStatusTrait;
     use Psr\Container\ContainerInterface;
     
     class Route implements RouteInterface
