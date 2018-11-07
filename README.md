@@ -72,7 +72,25 @@ $router->get('/blog/{id}', function($request, $response, $id) {
     return $response->write('This is post with id '.$id);
 }
 ```
-Embryo Routing supports GET, POST, PUT, PATCH, DELETE and OPTIONS request methods. Every request method corresponds to a method of the Router class: get(), post(), put(), patch(), delete(), options().
+
+### Methods
+Embryo Routing supports GET, POST, PUT, PATCH, DELETE and OPTIONS request methods. Every request method corresponds to a method of the Router class: `get()`, `post()`, `put()`, `patch()`, `delete()` and `options()`.
+You can use `all()` and `match()` methods for supporting all methods or specific route methods.
+```php
+// All methods
+$router->all('pattern', function($request, $response, $id) {
+    //...
+}
+
+// Match methods
+$router->match(['GET', 'POST'], 'pattern', function($request, $response, $id) {
+    //...
+}
+```
+
+### Overriding the request method
+Use `X-HTTP-Method-Override` to override the HTTP Request Method. Only works when the original Request Method is POST. Allowed values for X-HTTP-Method-Override are `PUT`, `DELETE`, or `PATCH`. Embryo uses `MethodOverrideMiddleware` for manage HTTP-Method-Override.
+
 ## Callbacks
 
 ## Placeholders
