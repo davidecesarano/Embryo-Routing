@@ -68,13 +68,13 @@
                         $request  = $request->withAttribute($this->attribute, $route);
                         return $handler->handle($request);
                     case 405:
-                        throw new \Exception('Method Not Allowed', 405);
+                        return (new ResponseFactory)->createResponse(405);
                     default:
-                        throw new \RuntimeException('Error during routing');
+                        return (new ResponseFactory)->createResponse(500);
                 }
                 
             } else {
-                throw new \Exception('Not Found', 404);
+                return (new ResponseFactory)->createResponse(404);
             }      
         }
     }
