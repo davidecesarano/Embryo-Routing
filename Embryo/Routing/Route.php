@@ -10,13 +10,14 @@
     namespace Embryo\Routing;
     
     use Embryo\Routing\Interfaces\RouteInterface;
-    use Embryo\Routing\Traits\RouteMatchTrait;
     use Embryo\Routing\Traits\RouteActionTrait;
+    use Embryo\Routing\Traits\RouteMatchTrait;
+    use Embryo\Routing\Traits\RouteStatusTrait;
     use Psr\Container\ContainerInterface;
     
     class Route implements RouteInterface
     {    
-        use RouteMatchTrait, RouteActionTrait;
+        use RouteMatchTrait, RouteActionTrait, RouteStatusTrait;
 
         /**
          * @var string $basePath
@@ -77,6 +78,11 @@
          * @var string $name
          */
         protected $name;
+
+        /**
+         * @var int $status
+         */
+        protected $status;
 
         /**
          * ------------------------------------------------------------
@@ -362,6 +368,22 @@
 
         /**
          * ------------------------------------------------------------
+         * STATUS
+         * ------------------------------------------------------------
+         */
+
+        /**
+         * Return status code.
+         * 
+         * @return int
+         */
+        public function getStatus(): int
+        {
+            return $this->status;
+        }
+
+        /**
+         * ------------------------------------------------------------
          * MATCH
          * ------------------------------------------------------------
          */
@@ -375,25 +397,26 @@
          * @param string $method 
          * @return bool
          */
-        public function match(string $uri, string $method)
+        public function match(string $uri, string $method): bool
         {
-            if (!in_array($method, $this->methods)) {
-                return false;
-            }
-
             $uri     = rtrim($uri, '/');
             $path    = $this->composeRoutePath();
             $pattern = $this->getRouteRegexPath($path);
 
             if (preg_match('#^'.$pattern.'$#i', $uri, $arguments)) {
 
+                if (!in_array($method, $this->methods)) {
+                    $this->setStatus(405);
+                }
+
                 $this->setUri($uri);
                 $this->setMethod($method);
                 $this->setRoutePath($path);
                 $this->setArguments($arguments, $path);
+                $this->setStatus(200);
                 return true;
 
-            } else { 
+            } else {
                 return false;
             }
         }

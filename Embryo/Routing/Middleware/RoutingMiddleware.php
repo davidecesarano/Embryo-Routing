@@ -24,6 +24,11 @@
         private $router;
 
         /**
+         * @var string $attribute
+         */
+        private $attribute = 'route';
+
+        /**
          * Sets router.
          *
          * @param RouterInterface $container 
@@ -31,6 +36,18 @@
         public function __construct(RouterInterface $router)
         {   
             $this->router = $router;
+        }
+
+        /**
+         * Set attribute name.
+         *
+         * @param string $name
+         * @return self
+         */
+        public function setAttribute(string $name): self
+        {
+            $this->attribute = $name;
+            return $this;
         }
         
         /**
@@ -45,11 +62,19 @@
             $route = $this->router->dispatcher($request);
             if ($route instanceof RouteInterface) {
 
-                $request  = $request->withAttribute('route', $route);
-                return $handler->handle($request);
-
+                $status = $route->getStatus();
+                switch($status) {
+                    case 200:
+                        $request  = $request->withAttribute($this->attribute, $route);
+                        return $handler->handle($request);
+                    case 405:
+                        throw new \Exception('Method Not Allowed', 405);
+                    default:
+                        throw new \RuntimeException('Error during routing');
+                }
+                
             } else {
-                return (new ResponseFactory)->createResponse(404);
+                throw new \Exception('Not Found', 404);
             }      
         }
     }

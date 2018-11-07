@@ -29,6 +29,7 @@
         public function getRoutePath(): string;
         public function getName(): string; 
         public function getUri(): string;     
-        public function getArguments(): array;      
-        public function match(string $uri, string $method);
+        public function getArguments(): array;  
+        public function getStatus(): int;      
+        public function match(string $uri, string $method): bool;
     }
