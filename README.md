@@ -21,10 +21,7 @@ Using Composer:
 ```
 $ composer require davidecesarano/embryo-routing
 ```
-
-# Usage
-
-## Example
+# Example
 Before defining the application routes, it is necessary to create an instance of the `Container`, the `ServerRequest` and the `Response`.
 ```php
 use Embryo\Container\Container;
@@ -62,6 +59,16 @@ $ cd example
 $ php -S localhost:8000
 ```
 Going to http://localhost:8000 will now display "Hello World!".
+
+# Usage
+* Create routes
+* Callbacks
+* Placeholders
+* Add middleware to route
+* Set name route
+* Create route groups
+* Resolve via Container
+* Working in subfolder
 
 ## Create routes
 You can define application routes using methods on the Router object. Every method accepts two arguments:
