@@ -16,7 +16,7 @@
     
     class Route implements RouteInterface
     {    
-        use RouteMatchTrait, RouteActionTrait, RouteStatusTrait;
+        use RouteMatchTrait, RouteActionTrait;
 
         /**
          * @var string $basePath
