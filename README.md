@@ -78,12 +78,12 @@ Embryo Routing supports GET, POST, PUT, PATCH, DELETE and OPTIONS request method
 You can use `all()` and `match()` methods for supporting all methods or specific route methods.
 ```php
 // All methods
-$router->all('pattern', function($request, $response, $id) {
+$router->all('pattern', function($request, $response) {
     //...
 }
 
 // Match methods
-$router->match(['GET', 'POST'], 'pattern', function($request, $response, $id) {
+$router->match(['GET', 'POST'], 'pattern', function($request, $response) {
     //...
 }
 ```
