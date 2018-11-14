@@ -12,9 +12,9 @@ A lightweight, fast and PSR compatible PHP Router.
 # Requirements
 * PHP >= 7.1
 * URL Rewriting
-* A [PSR-7](https://www.php-fig.org/psr/psr-7/) http message implementation and [PSR-17](https://www.php-fig.org/psr/psr-17/) http factory implementation (ex. Embryo-Http)
-* A [PSR-11](https://www.php-fig.org/psr/psr-11/) container implementation (ex. Embryo-Container)
-* A [PSR-15](https://www.php-fig.org/psr/psr-15/) http server request handlers implementation (ex. Embryo-Middleware)
+* A [PSR-7](https://www.php-fig.org/psr/psr-7/) http message implementation and [PSR-17](https://www.php-fig.org/psr/psr-17/) http factory implementation (ex. [Embryo-Http](https://github.com/davidecesarano/Embryo-Http))
+* A [PSR-11](https://www.php-fig.org/psr/psr-11/) container implementation (ex. [Embryo-Container](https://github.com/davidecesarano/Embryo-Container))
+* A [PSR-15](https://www.php-fig.org/psr/psr-15/) http server request handlers implementation (ex. [Embryo-Middleware](https://github.com/davidecesarano/Embryo-Middleware))
 
 # Installation
 Using Composer:
