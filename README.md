@@ -64,9 +64,9 @@ Going to http://localhost:8000 will now display "Hello World!".
 * Create routes
 * Callbacks
 * Placeholders
-* Add middleware to route
 * Set name route
 * Create route groups
+* Add middleware to route
 * Resolve via Container
 * Working in subfolder
 
