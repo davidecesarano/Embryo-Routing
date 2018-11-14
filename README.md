@@ -221,6 +221,24 @@ $router->prefix('/api')->middleware('App\GroupMiddlewareTest')->group(function($
 });
 ```
 ## Resolve via Container
+In callback, in addition to closure, you can use the `class@method` string:
+```php
+$router->get('/user/{id}', 'user@getById');
+```
+It translates a string entry into a class/method call like this:
+```php
+use Embryo\Routing\Controller;
+
+class User extends Controller
+{
+    public function getById($request, $response, $id)
+    {
+        $this->get('session')->set('id', $id);
+        //...
+    }
+}
+```
+In this example you will have access to the DI container instance inside of the class via the `$this` keyword.
 
 ## Working in subfolder
 Embryo Routing can works in a subdirectory by setting the path with `setBasePath()` method:
