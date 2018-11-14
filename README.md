@@ -82,7 +82,11 @@ $router->get('/blog/{id}', function($request, $response, $id) {
 ```
 
 ### Methods
+<<<<<<< HEAD
 Embryo Routing supports GET, POST, PUT, PATCH, DELETE and OPTIONS request methods. Every request method corresponds to a method of the Router object: `get()`, `post()`, `put()`, `patch()`, `delete()` and `options()`.
+=======
+Embryo Routing supports GET, POST, PUT, PATCH, DELETE and OPTIONS request methods. Every request method corresponds to a method of the Router class: `get()`, `post()`, `put()`, `patch()`, `delete()` and `options()`.
+>>>>>>> a74a96b425a1109bf5b09827e7a06cc17f2f905d
 You can use `all()` and `match()` methods for supporting all methods or specific route methods.
 ```php
 // All methods
