@@ -61,14 +61,14 @@ $ php -S localhost:8000
 Going to http://localhost:8000 will now display "Hello World!".
 
 # Usage
-* Create routes
-* Callbacks
-* Placeholders
-* Set name route
-* Create route groups
-* Add middleware to route
-* Resolve via Container
-* Working in subfolder
+* [Create routes](#create-routes)
+* [Callbacks](#callbacks)
+* [Placeholders](#placeholder)
+* [Set name route](#set-name-route)
+* [Create route groups](#create-route-group)
+* [Add middleware to route](#add-middleware-to-route)
+* [Resolve via Container](#resolve-via-container)
+* [Working in subfolder](#working-in-subdirectory)
 
 ## Create routes
 You can define application routes using methods on the Router object. Every method accepts two arguments:
