@@ -172,7 +172,7 @@ $router->get('/blog[/{year}][/{slug}]', function($request, $response, $year = 20
 In this example, a URI of /`blog/2018/my-post-title` would result in the `$year` (2018) and `$slug` (my-post-title) arguments.
 
 ### Set regex route
-By default the placeholders can accept any character from a-z, A-Z, 0-9, including the _ (underscore). However, placeholders can also require the HTTP request URI to match a particular regular expression. If the current HTTP request URI does not match a placeholder regular expression, the route is not invoked.
+By default the placeholders can accept any character from a-z, A-Z, 0-9, including the _ (underscore). However, placeholders can also require the HTTP request URI to match a particular regular expression. For this, you can use `where()` method:
 ```php
 $router->get('/blog/{id}/{name}', function($request, $response, $id, $name){
     //...
@@ -183,12 +183,54 @@ $router->get('/blog/{id}/{name}', function($request, $response, $id, $name){
 ```
 
 ## Set name route
+You can be assigned a name at the route with `name()` method:
+```php
+$router->get('/hello/{name}', function ($request, $response, $name) {
+    echo $name;
+})->name('route');
+```
+## Create route groups
+You can organize routes into logical groups with `group()` method. If you want add a route prefix you can use `prefix()` method:
+```php
+$router->prefix('/api')->group(function($router){
+    $router->get('/user/{id}', function($request, $response, $id){
+        //...
+    });
+});
+```
+In this example URI is, for example, /api/user/1.
 
 ## Add middleware to route
+You can also attach a PSR-15 middleware to any route or route group.
 
-## Create route groups
+### Route middleware
+You can use the `middleware()` method to assign one or more middleware at the route:
+```php
+$router->get('/users', function($request, $response){
+    //...
+})->middleware('App\TestMiddleware1', 'App\TestMiddleware2');
+```
 
+### Group middleware
+In addition to the routes, you can assign one or more middleware to a group and to individual routes within the group:
+```php
+$router->prefix('/api')->middleware('App\GroupMiddlewareTest')->group(function($router){
+    $router->get('/user/{id}', function($request, $response, $id){
+        //...
+    })->middleware('App\RouteMiddlewareTest');
+});
+```
 ## Resolve via Container
 
 ## Working in subfolder
+Embryo Routing can works in a subdirectory by setting the path with `setBasePath()` method:
+```php
+$router = new Router;
+$router->setBasePath('/path/subdirectory');
 
+$router->get('/', function($request, $response){
+    return $response->write('Hello World!');
+});
+
+//...
+```
