@@ -18,7 +18,7 @@
         /**
          * @var ContainerInterface 
          */    
-        protected $container;
+        private $container;
         
         /**
          * Set Container.
@@ -29,5 +29,16 @@
         final public function setContainer(ContainerInterface $container)
         {
             $this->container = $container;
+        }
+
+        /**
+         * Get service from Container.
+         *
+         * @param string $name
+         * @return mixed
+         */
+        final public function get(string $name)
+        {
+            return $this->container->get($name);
         }
     }
