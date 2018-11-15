@@ -72,10 +72,11 @@
         /**
          * Returns controller's class.
          * 
-         * @param string $controller
+         * @param ServerRequestInterface $request 
+         * @param ResponseInterface $response 
          * @return array
          */
-        private function resolve(): array
+        private function resolve(ServerRequestInterface $request, ResponseInterface $response): array
         {
             $name   = explode('@', $this->controller)[0];
             $method = explode('@', $this->controller)[1];
@@ -92,7 +93,7 @@
             $class = $this->container->get($class);
             $class->setContainer($this->container);
             $class->setRequest($request);
-            $class->setResponse($request);
+            $class->setResponse($response);
 
             return [$class, $method];
         }
@@ -121,6 +122,7 @@
          */
         private function setArguments(ServerRequestInterface $request, array $params): array
         {
+            $args = [];
             $arguments = $request->getAttribute('route')->getArguments();
             if (!empty($arguments)) {
                 foreach ($arguments as $name => $argument) {
