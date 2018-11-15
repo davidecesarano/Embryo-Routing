@@ -48,7 +48,7 @@
         }
 
         /**
-         * Undocumented function
+         * Return default value parameters.
          *
          * @return array
          */
@@ -60,5 +60,25 @@
                 $params[$value->getName()] = ($value->isDefaultValueAvailable()) ? $value->getDefaultValue() : null;
             }
             return $params;
+        }
+
+        /**
+         * Set and return arguments.
+         * 
+         * @param ServerRequestInterface $request
+         * @param array $params
+         * @return array 
+         */
+        private function setArguments(ServerRequestInterface $request, ResponseInterface $response, array $params): array
+        {
+            $args[] = $request;
+            $args[] = $response;
+            $arguments = $request->getAttribute('route')->getArguments();
+            if (!empty($arguments)) {
+                foreach ($arguments as $name => $argument) {
+                    $args[] = ($argument) ? $argument : $params[$name];
+                }
+            }
+            return $args;
         }
     }

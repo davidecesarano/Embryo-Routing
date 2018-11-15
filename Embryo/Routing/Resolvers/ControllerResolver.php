@@ -4,6 +4,9 @@
      * ControllerResolver
      * 
      * Resolves and executes a controller route.
+     * 
+     * @author Davide Cesarano <davide.cesarano@unipegaso.it>
+     * @link   https://github.com/davidecesarano/embryo-routing 
      */
 
     namespace Embryo\Routing\Resolvers;
@@ -25,26 +28,26 @@
         private $namespace;
 
         /**
-         * Sets container.
+         * Set container.
          * 
          * @param string $controller 
          * @return self
          */
         public function __construct(string $controller)
         {
-            if (strpos($controller, '@') === false || !is_string($controller)) {
-                throw new \InvalidArgumentException("$controller must be a string");
+            if (strpos($controller, '@') === false) {
+                throw new \InvalidArgumentException("$controller must be a 'class@method' string.");
             }
             $this->controller = $controller;
         }
 
         /**
-         * Sets namespace.
+         * Set namespace.
          *
          * @param string $namespace
          * @return self
          */
-        public function setNamespace($namespace)
+        public function setNamespace($namespace): self
         {
             $this->namespace = $namespace;
             return $this;
@@ -59,9 +62,9 @@
          */
         public function process(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
         {
-            $controller = $this->resolve();
+            $controller = $this->resolve($request, $response);
             $params     = $this->getDefaultValueParameters($controller);
-            $args       = $this->setArguments($request, $response, $params);
+            $args       = $this->setArguments($request, $params);
             $response   = $this->execute($controller, $args);
             return $response;
         }
@@ -72,7 +75,7 @@
          * @param string $controller
          * @return array
          */
-        private function resolve()
+        private function resolve(): array
         {
             $name   = explode('@', $this->controller)[0];
             $method = explode('@', $this->controller)[1];
@@ -88,10 +91,18 @@
 
             $class = $this->container->get($class);
             $class->setContainer($this->container);
+            $class->setRequest($request);
+            $class->setResponse($request);
+
             return [$class, $method];
         }
 
-        public function getDefaultValueParameters(array $controller)
+        /**
+         * Return default value parameters.
+         *
+         * @return array
+         */
+        private function getDefaultValueParameters(array $controller): array
         {
             $ref = new \ReflectionMethod($controller[0], $controller[1]);
             $params = [];
@@ -99,5 +110,23 @@
                 $params[$value->getName()] = ($value->isDefaultValueAvailable()) ? $value->getDefaultValue() : null;
             }
             return $params;
+        }
+
+        /**
+         * Set and return arguments.
+         * 
+         * @param ServerRequestInterface $request
+         * @param array $params
+         * @return array 
+         */
+        private function setArguments(ServerRequestInterface $request, array $params): array
+        {
+            $arguments = $request->getAttribute('route')->getArguments();
+            if (!empty($arguments)) {
+                foreach ($arguments as $name => $argument) {
+                    $args[] = ($argument) ? $argument : $params[$name];
+                }
+            }
+            return $args;
         }
     }

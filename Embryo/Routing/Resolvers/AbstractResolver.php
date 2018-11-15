@@ -3,7 +3,10 @@
     /**
      * AbstractResolver
      * 
+     * Resolves and executes a controller or callable route.
      * 
+     * @author Davide Cesarano <davide.cesarano@unipegaso.it>
+     * @link   https://github.com/davidecesarano/embryo-routing 
      */
 
     namespace Embryo\Routing\Resolvers;
@@ -30,28 +33,7 @@
         }
 
         /**
-         * Set and return arguments.
-         * 
-         * @param ServerRequestInterface $request 
-         * @param RequestHandlerInterface $handler 
-         * @param array $params
-         * @return array 
-         */
-        protected function setArguments(ServerRequestInterface $request, ResponseInterface $response, array $params): array
-        {
-            $args[] = $request;
-            $args[] = $response;
-            $arguments = $request->getAttribute('route')->getArguments();
-            if (!empty($arguments)) {
-                foreach ($arguments as $name => $argument) {
-                    $args[] = ($argument) ? $argument : $params[$name];
-                }
-            }
-            return $args;
-        }
-
-        /**
-         * Returns or
+         * Execute the callable.
          *
          * @param callable $callable
          * @param array $args
