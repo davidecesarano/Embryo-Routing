@@ -231,14 +231,14 @@ use Embryo\Routing\Controller;
 
 class User extends Controller
 {
-    public function getById($request, $response, $id)
+    public function getById($id)
     {
         $this->get('session')->set('id', $id);
         //...
     }
 }
 ```
-In this example you will have access to the DI container instance inside of the class via the `$this` keyword.
+In this example you will have access to the DI container instance inside of the class via the `$this` keyword. If you will have access to the request or response instance use `$this->request()` and `$this->response()`.
 
 ## Working in subfolder
 Embryo Routing can works in a subdirectory by setting the path with `setBasePath()` method:
