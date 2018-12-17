@@ -60,6 +60,14 @@
                 $resolver->setNamespace($namespace);
             }
 
+            $this->container->set('request', function() use($request){
+                return $request;
+            });
+
+            $this->container->set('response', function() use($response){
+                return $response;
+            });
+            
             $resolver->setContainer($this->container);
             $response = $resolver->process($request, $response);
             return $response;
