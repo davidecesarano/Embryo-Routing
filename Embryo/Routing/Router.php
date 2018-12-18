@@ -172,6 +172,25 @@
         }
 
         /**
+         * Create CRUD routes.
+         *
+         * @param string $pattern
+         * @param string $class
+         * @param string $regex
+         * @return void
+         */
+        public function crud(string $pattern, string $class, string $regex = '{param}')
+        {
+            $this->get($pattern, $class.'@index');
+            $this->get($pattern.'/create', $class.'@create');
+            $this->post($pattern, $class.'@store');
+            $this->get($pattern.'/'.$regex, $class.'@show');
+            $this->get($pattern.'/'.$regex.'/edit', $class.'@edit');
+            $this->put($pattern.'/'.$regex, $class.'@update');
+            $this->delete($pattern.'/'.$regex, $class.'@destroy');
+        }
+
+        /**
          * Set one or more middleware for group routes.
          *
          * @param array $middleware
