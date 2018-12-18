@@ -12,6 +12,7 @@
     namespace Embryo\Routing\Middleware;
     
     use Embryo\Http\Factory\ResponseFactory;
+    use Embryo\Routing\Exceptions\{MethodNotAllowedException, NotFoundException};
     use Embryo\Routing\Interfaces\{RouteInterface, RouterInterface};
     use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
     use Psr\Http\Server\{MiddlewareInterface, RequestHandlerInterface};
@@ -68,13 +69,13 @@
                         $request  = $request->withAttribute($this->attribute, $route);
                         return $handler->handle($request);
                     case 405:
-                        throw new \Exception('Method Not Allowed', 405);
+                        throw new MethodNotAllowedException('Method Not Allowed', 405);
                     default:
                         throw new \Exception('Internal Server Error', 500);
                 }
                 
             } else {
-                throw new \Exception('Not Found', 404);
+                throw new NotFoundException('Not Found', 404);
             }      
         }
     }
