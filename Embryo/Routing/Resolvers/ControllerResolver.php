@@ -90,7 +90,7 @@
                 throw new \RuntimeException("$method method of the ".get_class($class)." class does not exist");
             }
 
-            $class = $this->container->get($class);
+            $class = $this->container->reflection($class);
             $class->setContainer($this->container);
             $class->setRequest($request);
             $class->setResponse($response);
