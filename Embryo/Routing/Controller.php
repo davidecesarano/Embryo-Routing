@@ -75,24 +75,4 @@
         {
             return $this->container->get($key);
         }
-
-        /**
-         * Get Request.
-         *
-         * @return ServerRequestInterface $request
-         */
-        final public function request(): ServerRequestInterface
-        {
-            return $this->request;
-        }
-
-        /**
-         * Get Response.
-         *
-         * @return ResponseInterface $response
-         */
-        final public function response(): ResponseInterface
-        {
-            return $this->response;
-        }
     }
