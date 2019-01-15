@@ -25,12 +25,12 @@
         /**
          * @var ServerRequestInterface 
          */    
-        private $request;
+        protected $request;
 
         /**
          * @var ResponseInterface 
          */    
-        private $response;
+        protected $response;
         
         /**
          * Set Container.
