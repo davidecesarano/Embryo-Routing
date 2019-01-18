@@ -184,10 +184,10 @@
          * Returns an instance with the specified middleware
          * for group route.
          * 
-         * @param array $middleware 
+         * @param string|MiddlewareInterface|array $middleware 
          * @return RouteInterface
          */
-        public function withMiddleware(array $middleware): RouteInterface
+        public function withMiddleware($middleware): RouteInterface
         {
             $clone = clone $this;
             $clone->middleware = $middleware;
@@ -197,9 +197,9 @@
         /**
          * Returns middleware.
          *
-         * @return array
+         * @return string|MiddlewareInterface|array
          */
-        public function getMiddleware(): array
+        public function getMiddleware()
         {
             return $this->middleware;
         }

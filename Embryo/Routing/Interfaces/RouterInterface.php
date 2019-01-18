@@ -23,7 +23,7 @@
         public function options(string $pattern, $callback);
         public function map(array $methods, string $pattern, $callback);
         public function all(string $pattern, $callback);
-        public function middleware(array $middleware): RouterInterface;
+        public function middleware($middleware): RouterInterface;
         public function prefix(string $prefix): RouterInterface;
         public function group(callable $callback): RouterInterface;
         public function redirect(string $pattern, string $location, int $code);

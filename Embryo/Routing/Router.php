@@ -193,10 +193,10 @@
         /**
          * Set one or more middleware for group routes.
          *
-         * @param array $middleware
+         * @param string|MiddlewareInterface|array $middleware
          * @return RouterInterface
          */
-        public function middleware(array $middleware): RouterInterface
+        public function middleware($middleware): RouterInterface
         {
             $this->middleware = $middleware;
             return $this;

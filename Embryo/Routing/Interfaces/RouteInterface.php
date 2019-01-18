@@ -17,8 +17,8 @@
         public function getPrefix(): string;
         public function withNamespace(string $namespace): RouteInterface;
         public function getNamespace(): string;
-        public function withMiddleware(array $middleware): RouteInterface;
-        public function getMiddleware(): array;
+        public function withMiddleware($middleware): RouteInterface;
+        public function getMiddleware();
         public function withMethods(array $methods): RouteInterface;
         public function getMethods(): array;
         public function getMethod(): string;

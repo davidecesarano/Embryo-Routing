@@ -45,9 +45,17 @@
             $middleware     = $route->getMiddleware();
             $namespace      = $route->getNamespace();
             $response       = $handler->handle($request);
+            $dispatcher     = new MiddlewareDispatcher;
 
-            if (!empty($middleware)) {
-                $dispatcher = new MiddlewareDispatcher($middleware);
+            if (is_string($middleware) || $middleware instanceof MiddlewareInterface) {
+                $dispatcher->add($middleware);
+                $response = $dispatcher->dispatch($request, $response);
+            }
+
+            if (is_array($middleware)) {
+                foreach ($middleware as $m) {
+                    $dispatcher->add($m);
+                }
                 $response = $dispatcher->dispatch($request, $response);
             }
             
