@@ -42,19 +42,14 @@
         {
             $route          = $request->getAttribute('route');
             $requestHandler = $route->getCallback();
-            $middleware     = $route->getMiddleware();
+            $middlewares    = $route->getMiddleware();
             $namespace      = $route->getNamespace();
             $response       = $handler->handle($request);
             $dispatcher     = new MiddlewareDispatcher;
 
-            if (is_string($middleware) || $middleware instanceof MiddlewareInterface) {
-                $dispatcher->add($middleware);
-                $response = $dispatcher->dispatch($request, $response);
-            }
-
-            if (is_array($middleware)) {
-                foreach ($middleware as $m) {
-                    $dispatcher->add($m);
+            if (!empty($middlewares)) {
+                foreach ($middlewares as $middleware) {
+                    $dispatcher->add($middleware);
                 }
                 $response = $dispatcher->dispatch($request, $response);
             }

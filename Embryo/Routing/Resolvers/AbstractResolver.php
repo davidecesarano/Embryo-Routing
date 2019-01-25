@@ -42,7 +42,7 @@
         protected function execute(callable $callable, array $args): ResponseInterface
         {   
             ob_start();
-            $level  = ob_get_level();
+            $level = ob_get_level();
 
             try {
 

@@ -41,9 +41,9 @@
         private $namespace = 'App\\Controllers';
 
         /**
-         * @var string $prefix
+         * @var array $prefix
          */
-        private $prefix = '';
+        private $prefix = [];
         
         /**
          * @var array $middleware
@@ -193,12 +193,12 @@
         /**
          * Set one or more middleware for group routes.
          *
-         * @param string|MiddlewareInterface|array $middleware
+         * @param string|MiddlewareInterface $middleware
          * @return RouterInterface
          */
         public function middleware($middleware): RouterInterface
         {
-            $this->middleware = $middleware;
+            $this->middleware[] = $middleware;
             return $this;
         }
 
@@ -210,7 +210,7 @@
          */
         public function prefix(string $prefix): RouterInterface
         {
-            $this->prefix = $prefix;
+            $this->prefix[] = $prefix;
             return $this;
         }
 
@@ -223,8 +223,8 @@
         public function group(callable $callback): RouterInterface
         {
             call_user_func($callback, $this);
-            $this->prefix = '';
-            $this->middleware = [];
+            array_pop($this->prefix);
+            array_pop($this->middleware);
             return $this;
         }
 

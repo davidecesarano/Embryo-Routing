@@ -13,12 +13,12 @@
     {
         public function withBasePath(string $basePath): RouteInterface;
         public function getBasePath(): string;
-        public function withPrefix(string $prefix): RouteInterface;
+        public function withPrefix(array $prefix): RouteInterface;
         public function getPrefix(): string;
         public function withNamespace(string $namespace): RouteInterface;
         public function getNamespace(): string;
-        public function withMiddleware($middleware): RouteInterface;
-        public function getMiddleware();
+        public function withMiddleware(array $middleware): RouteInterface;
+        public function getMiddleware(): array;
         public function withMethods(array $methods): RouteInterface;
         public function getMethods(): array;
         public function getMethod(): string;

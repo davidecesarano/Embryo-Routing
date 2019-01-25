@@ -125,13 +125,13 @@
          * 
          * Default value is empty string.
          * 
-         * @param string $prefix 
+         * @param array $prefix 
          * @return RouteInterface
          */
-        public function withPrefix(string $prefix): RouteInterface
+        public function withPrefix(array $prefix): RouteInterface
         {
             $clone = clone $this;
-            $clone->prefix = $prefix;
+            $clone->prefix = (!empty($prefix)) ? implode('', $prefix) : '';
             return $clone;
         }
 
@@ -184,10 +184,10 @@
          * Returns an instance with the specified middleware
          * for group route.
          * 
-         * @param string|MiddlewareInterface|array $middleware 
+         * @param array $middleware 
          * @return RouteInterface
          */
-        public function withMiddleware($middleware): RouteInterface
+        public function withMiddleware(array $middleware): RouteInterface
         {
             $clone = clone $this;
             $clone->middleware = $middleware;
@@ -197,9 +197,9 @@
         /**
          * Returns middleware.
          *
-         * @return string|MiddlewareInterface|array
+         * @return array
          */
-        public function getMiddleware()
+        public function getMiddleware(): array
         {
             return $this->middleware;
         }
