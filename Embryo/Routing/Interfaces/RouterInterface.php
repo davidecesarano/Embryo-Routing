@@ -9,7 +9,8 @@
     
     namespace Embryo\Routing\Interfaces;
 
-    use Psr\Http\Message\ServerRequestInterface;
+    use Embryo\Routing\Interfaces\RouteInterface;
+    use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
 
     interface RouterInterface
     {
@@ -27,5 +28,6 @@
         public function prefix(string $prefix): RouterInterface;
         public function group(callable $callback): RouterInterface;
         public function redirect(string $pattern, string $location, int $code);
-        public function dispatcher(ServerRequestInterface $request);
+        public function match(ServerRequestInterface $request);
+        public function handle(ServerRequestInterface $request, ResponseInterface $response, RouteInterface $route): ResponseInterface;
     }

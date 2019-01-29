@@ -12,12 +12,20 @@
 
     namespace Embryo\Routing;
 
+    use Exception;
+    use Embryo\Routing\Exceptions\{MethodNotAllowedException, NotFoundException};
     use Embryo\Routing\Interfaces\{RouteInterface, RouterInterface};
     use Embryo\Routing\Route;
-    use Psr\Http\Message\ServerRequestInterface;
+    use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
+    use Psr\Http\Server\RequestHandlerInterface;
     
     class Router implements RouterInterface
-    {          
+    {    
+        /**
+         * @var RequestHandlerInterface
+         */
+        private $requestHandler;
+
         /**
          * @var array $routes
          */
@@ -49,6 +57,16 @@
          * @var array $middleware
          */
         private $middleware = []; 
+
+        /**
+         * Set request handler.
+         *
+         * @param RequestHandlerInterface $requestHandler
+         */
+        public function __construct(RequestHandlerInterface $requestHandler)
+        {
+            $this->requestHandler = $requestHandler;
+        }
 
         /**
          * Set base path.
@@ -270,15 +288,15 @@
         }
         
         /** 
-         * Dispatcher.
+         * Match route.
          * 
-         * Find the route, start dispatcher and return
+         * Find the route and return
          * a route object if find it.
          * 
          * @param ServerRequestInterface $request
          * @return RouteInterface|bool
          */
-        public function dispatcher(ServerRequestInterface $request)
+        public function match(ServerRequestInterface $request)
         {
             $path   = $request->getUri()->getPath();
             $method =  $request->getMethod();
@@ -289,5 +307,52 @@
                 }
             }
             return false;
-        } 
+        }
+        
+        /** 
+         * Dispatching route.
+         * 
+         * @param ServerRequestInterface $request
+         * @param ResponseInterface $response
+         * @return RouteInterface|bool
+         * @throws MethodNotAllowedException
+         * @throws Exception
+         * @throws NotFoundException
+         */
+        public function dispatch(ServerRequestInterface $request, ResponseInterface $response)
+        {
+            $route = $this->match($request);
+            if ($route instanceof RouteInterface) {
+
+                $status = $route->getStatus();
+                switch($status) {
+                    case 200:
+                        return $this->handle($request, $response, $route);
+                    case 405:
+                        throw new MethodNotAllowedException('Method Not Allowed', 405);
+                    default:
+                        throw new Exception('Internal Server Error', 500);
+                }
+                
+            } else {
+                throw new NotFoundException('Not Found', 404);
+            }
+        }
+
+        /**
+         * Route handler.
+         *
+         * @param ServerRequestInterface $request
+         * @param ResponseInterface $response
+         * @param RouteInterface $route
+         * @return ResponseInterface
+         */
+        public function handle(ServerRequestInterface $request, ResponseInterface $response, RouteInterface $route): ResponseInterface 
+        {
+            foreach ($route->getMiddleware() as $middleware) {
+                $this->requestHandler->add($middleware);
+            }
+            $request = $request->withAttribute('route', $route);
+            return $this->requestHandler->dispatch($request, $response);
+        }
     }
