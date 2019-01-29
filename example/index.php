@@ -2,18 +2,20 @@
 
     require __DIR__.'/../vendor/autoload.php';
 
+    use Embryo\Container\Container;
     use Embryo\Http\Emitter\Emitter;
     use Embryo\Http\Factory\ServerRequestFactory;
     use Embryo\Http\Factory\ResponseFactory;
-    use Embryo\Http\Server\MiddlewareDispatcher;
+    use Embryo\Http\Server\RequestHandler;
     use Embryo\Routing\Router;
 
-    $container  = new Embryo\Container\Container;
-    $request    = (new ServerRequestFactory)->createServerRequestFromServer();
-    $response   = (new ResponseFactory)->createResponse(200);
+    $container      = new Container;
+    $request        = (new ServerRequestFactory)->createServerRequestFromServer();
+    $response       = (new ResponseFactory)->createResponse(200);
+    $requestHandler = new RequestHandler;
+    $emitter        = new Emitter;
+    $router         = new Router($requestHandler);
     
-    $router = new Router;
-
     $router->get('/', function($request, $response){
         return $response->write('Hello World!');
     });
@@ -26,11 +28,8 @@
         return $response->write('Blog! Year: '.$year.', Month: '.$month.', Day: '.$day);
     });
 
-    $middleware = new MiddlewareDispatcher;
-    $middleware->add(new Embryo\Routing\Middleware\MethodOverrideMiddleware);
-    $middleware->add(new Embryo\Routing\Middleware\RoutingMiddleware($router));
-    $middleware->add(new Embryo\Routing\Middleware\RequestHandlerMiddleware($container));
-    $response = $middleware->dispatch($request, $response);
+    $requestHandler->add(new Embryo\Routing\Middleware\MethodOverrideMiddleware);
+    $requestHandler->add(new Embryo\Routing\Middleware\RoutingMiddleware($container));
     
-    $emitter = new Emitter;
+    $response = $router->dispatch($request, $response);
     $emitter->emit($response);
