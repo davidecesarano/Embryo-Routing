@@ -47,7 +47,7 @@
          * @param string $namespace
          * @return self
          */
-        public function setNamespace($namespace): self
+        public function setNamespace(string $namespace): self
         {
             $this->namespace = $namespace;
             return $this;
