@@ -3,7 +3,7 @@
     /**
      * RoutingMiddleware
      * 
-     * Stores the route handler and arguments in request attributes.
+     * Executes request handlers discovered by a router.
      * 
      * @author Davide Cesarano <davide.cesarano@unipegaso.it>
      * @link   https://github.com/davidecesarano/embryo-routing 
@@ -11,71 +11,61 @@
 
     namespace Embryo\Routing\Middleware;
     
-    use Embryo\Http\Factory\ResponseFactory;
-    use Embryo\Routing\Exceptions\{MethodNotAllowedException, NotFoundException};
-    use Embryo\Routing\Interfaces\{RouteInterface, RouterInterface};
+    use Embryo\Routing\Resolvers\{CallableResolver, ControllerResolver};
+    use Psr\Container\ContainerInterface;
     use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
     use Psr\Http\Server\{MiddlewareInterface, RequestHandlerInterface};
 
     class RoutingMiddleware implements MiddlewareInterface 
-    {
+    {   
         /**
-         * @var RouterInterface $router
-         */    
-        private $router;
+         * @param ContainerInterface $container
+         */ 
+        private $container;
 
         /**
-         * @var string $attribute
-         */
-        private $attribute = 'route';
-
-        /**
-         * Sets router.
+         * Set container.
          *
-         * @param RouterInterface $container 
+         * @param ContainerInterface $container
          */
-        public function __construct(RouterInterface $router)
-        {   
-            $this->router = $router;
-        }
-
-        /**
-         * Set attribute name.
-         *
-         * @param string $name
-         * @return self
-         */
-        public function setAttribute(string $name): self
+        public function __construct(ContainerInterface $container)
         {
-            $this->attribute = $name;
-            return $this;
+            $this->container = $container;
         }
-        
+
         /**
          * Process a server request and return a response.
          *
          * @param ServerRequestInterface $request 
          * @param RequestHandlerInterface $handler 
          * @return ResponseInterface 
+         * @throws InvalidArgumentException
          */
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
-            $route = $this->router->dispatcher($request);
-            if ($route instanceof RouteInterface) {
+            $route = $request->getAttribute('route');
+            if (!$route) {
+                return $handler->handle($request);
+            }
 
-                $status = $route->getStatus();
-                switch($status) {
-                    case 200:
-                        $request  = $request->withAttribute($this->attribute, $route);
-                        return $handler->handle($request);
-                    case 405:
-                        throw new MethodNotAllowedException('Method Not Allowed', 405);
-                    default:
-                        throw new \Exception('Internal Server Error', 500);
-                }
-                
-            } else {
-                throw new NotFoundException('Not Found', 404);
-            }      
+            $callback  = $route->getCallback();
+            $namespace = $route->getNamespace();
+            $response  = $handler->handle($request);
+
+            if (!is_callable($callback) && !is_string($callback)) {
+                throw new \InvalidArgumentException('Callback must be a callable or a string.');
+            }
+
+            if (is_callable($callback)) {
+                $resolver = new CallableResolver($callback);
+            }
+
+            if (is_string($callback)) {
+                $resolver = new ControllerResolver($callback);
+                $resolver->setNamespace($namespace);
+            }
+            
+            $resolver->setContainer($this->container);
+            return $resolver->process($request, $response);
         }
     }
