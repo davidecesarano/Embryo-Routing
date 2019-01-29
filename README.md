@@ -22,35 +22,44 @@ Using Composer:
 $ composer require davidecesarano/embryo-routing
 ```
 ## Example
-Before defining the application routes, it is necessary to create an instance of the `Container`, the `ServerRequest` and the `Response`.
+Before defining the application routes, it is necessary to create the following objects: 
+* the `Container`
+* the `ServerRequestFactory`
+* the `ResponseFactory`
+* the `RequestHandler`
+* the `Emitter`
+
 ```php
 use Embryo\Container\Container;
 use Embryo\Http\Emitter\Emitter;
 use Embryo\Http\Factory\ServerRequestFactory;
 use Embryo\Http\Factory\ResponseFactory;
-use Embryo\Http\Server\MiddlewareDispatcher;
+use Embryo\Http\Server\RequestHandler;
 use Embryo\Routing\Router;
 
-$container  = new Container;
-$request    = (new ServerRequestFactory)->createServerRequestFromServer();
-$response   = (new ResponseFactory)->createResponse(200);
+$container      = new Container;
+$request        = (new ServerRequestFactory)->createServerRequestFromServer();
+$response       = (new ResponseFactory)->createResponse(200);
+$requestHandler = new RequestHandler;
+$emitter        = new Emitter;
 ```
-Later you can define the routes with `Router` object and add the `Middleware` to the dispatcher.
+Later, you can define the routes with `Router` object (passing request handler in constructor), add the PSR-15 middlewares to the request handler (dispatcher) and execute the route dispatching (this method accepts the ServerRequest and Response).
 ```php
-$router = new Router;
+$router = new Router($requestHandler);
+
 $router->get('/', function($request, $response){
     return $response->write('Hello World!');
 });
 
-$middleware = new MiddlewareDispatcher;
+//...
+
 $middleware->add(new Embryo\Routing\Middleware\MethodOverrideMiddleware);
-$middleware->add(new Embryo\Routing\Middleware\RoutingMiddleware($router));
-$middleware->add(new Embryo\Routing\Middleware\RequestHandlerMiddleware($container));
-$response = $middleware->dispatch($request, $response);
+$middleware->add(new Embryo\Routing\Middleware\RoutingMiddleware($container));
+
+$response = $router->dispatch($request, $response);
 ```
-Finally you can produce output of the Response with Emitter object.
+Finally you can produce output of the Response with `Emitter` object.
 ```php
-$emitter = new Emitter;
 $emitter->emit($response);
 ```
 You may quickly test this using the built-in PHP server:
@@ -249,7 +258,7 @@ class User extends Controller
 {
     public function getById($id)
     {
-        $this->get('session')->set('id', $id);
+        $this->response->write('The User id is: '.$id);
         //...
     }
 }
@@ -259,7 +268,7 @@ In this example you will have access to the DI container instance inside of the 
 ### Working in subfolder
 Embryo Routing can works in a subdirectory by setting the path with `setBasePath()` method:
 ```php
-$router = new Router;
+$router = new Router($requestHandler);
 $router->setBasePath('/path/subdirectory');
 
 $router->get('/', function($request, $response){
