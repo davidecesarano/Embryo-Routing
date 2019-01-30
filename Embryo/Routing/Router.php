@@ -340,13 +340,13 @@
                     case 200:
                         return $this->handle($request, $response, $route);
                     case 405:
-                        throw new MethodNotAllowedException('Method Not Allowed', 405);
+                        throw new MethodNotAllowedException;
                     default:
                         throw new Exception('Internal Server Error', 500);
                 }
                 
             } else {
-                throw new NotFoundException('Not Found', 404);
+                throw new NotFoundException;
             }
         }
 
