@@ -13,7 +13,6 @@
     
     use Embryo\Routing\Controller;
     use Embryo\Routing\Resolvers\AbstractResolver;
-    use Psr\Container\ContainerInterface;
     use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
     
     class ControllerResolver extends AbstractResolver

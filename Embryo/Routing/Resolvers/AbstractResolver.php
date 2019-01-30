@@ -12,6 +12,7 @@
     namespace Embryo\Routing\Resolvers;
 
     use Embryo\Http\Factory\ResponseFactory;
+    use Psr\Container\ContainerInterface;
     use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
     abstract class AbstractResolver 
@@ -30,7 +31,7 @@
         {
             $this->container = $container;
         }
-        
+
         /**
          * Execute the callable.
          *
