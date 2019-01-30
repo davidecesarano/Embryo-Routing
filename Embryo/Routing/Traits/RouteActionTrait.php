@@ -8,18 +8,29 @@
      */
 
     namespace Embryo\Routing\Traits;
+    use Psr\Http\Server\MiddlewareInterface;
 
     trait RouteActionTrait 
     {
         /**
          * Sets one or more middleware for specific route.
          *
-         * @param array $middleware
+         * @param string|array|MiddlewareInterface $middleware
          * @return self 
          */
-        public function middleware(...$middleware): self
+        public function middleware($middleware): self
         {
-            $this->middleware = array_merge($this->middleware, $middleware);
+            if (!is_string($middleware) && !is_array($middleware) && !$middleware instanceof MiddlewareInterface) {
+                throw new \InvalidArgumentException('Middleware must be a string, an array or an instance of MiddlewareInterface');
+            }
+
+            if (is_array($middleware)) {
+                foreach ($middleware as $m) {
+                    array_merge($this->middleware, $m);
+                }    
+            }
+
+            array_merge($this->middleware, $middleware);
             return $this;
         }
 

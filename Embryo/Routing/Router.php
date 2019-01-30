@@ -17,7 +17,7 @@
     use Embryo\Routing\Interfaces\{RouteInterface, RouterInterface};
     use Embryo\Routing\Route;
     use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
-    use Psr\Http\Server\RequestHandlerInterface;
+    use Psr\Http\Server\{MiddlewareInterface, RequestHandlerInterface};
     
     class Router implements RouterInterface
     {    
@@ -211,11 +211,22 @@
         /**
          * Set one or more middleware for group routes.
          *
-         * @param string|MiddlewareInterface $middleware
+         * @param string|array|MiddlewareInterface $middleware
          * @return RouterInterface
+         * @throws InvalidArgumentException
          */
         public function middleware($middleware): RouterInterface
         {
+            if (!is_string($middleware) && !is_array($middleware) && !$middleware instanceof MiddlewareInterface) {
+                throw new \InvalidArgumentException('Middleware must be a string, an array or an instance of MiddlewareInterface');
+            }
+
+            if (is_array($middleware)) {
+                foreach ($middleware as $m) {
+                    $this->middleware[] = $m;
+                }    
+            }
+
             $this->middleware[] = $middleware;
             return $this;
         }
