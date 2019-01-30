@@ -17,6 +17,21 @@
     abstract class AbstractResolver 
     {
         /**
+         * @var ContainerInterface $container
+         */
+        protected $container;
+
+        /**
+         * Set container.
+         * 
+         * @param ContainerInterface $container 
+         */
+        public function setContainer(ContainerInterface $container)
+        {
+            $this->container = $container;
+        }
+        
+        /**
          * Execute the callable.
          *
          * @param callable $callable

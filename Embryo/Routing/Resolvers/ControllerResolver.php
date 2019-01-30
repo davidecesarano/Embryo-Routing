@@ -29,11 +29,6 @@
         private $namespace;
 
         /**
-         * @var ContainerInterface $container
-         */
-        protected $container;
-
-        /**
          * Set container.
          * 
          * @param string $controller 
@@ -57,16 +52,6 @@
         {
             $this->namespace = $namespace;
             return $this;
-        }
-
-        /**
-         * Set container.
-         * 
-         * @param ContainerInterface $container 
-         */
-        public function setContainer(ContainerInterface $container)
-        {
-            $this->container = $container;
         }
 
         /**

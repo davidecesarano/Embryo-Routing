@@ -61,12 +61,11 @@
             }
 
             if (is_string($callback)) {
-                
                 $resolver = new ControllerResolver($callback);
                 $resolver->setNamespace($namespace);
-                $resolver->setContainer($this->container);
-                
             }
+
+            $resolver->setContainer($this->container);
 
             $this->container->set('request', function() use($request) {
                 return $request;
