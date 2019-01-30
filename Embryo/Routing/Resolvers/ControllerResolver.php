@@ -13,6 +13,7 @@
     
     use Embryo\Routing\Controller;
     use Embryo\Routing\Resolvers\AbstractResolver;
+    use Psr\Container\ContainerInterface;
     use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
     
     class ControllerResolver extends AbstractResolver
@@ -26,6 +27,11 @@
          * @var string $namespace
          */
         private $namespace;
+
+        /**
+         * @var ContainerInterface $container
+         */
+        protected $container;
 
         /**
          * Set container.
@@ -54,6 +60,16 @@
         }
 
         /**
+         * Set container.
+         * 
+         * @param ContainerInterface $container 
+         */
+        public function setContainer(ContainerInterface $container)
+        {
+            $this->container = $container;
+        }
+
+        /**
          * Process a server request and return a response.
          * 
          * @param ServerRequestInterface $request 
@@ -65,7 +81,7 @@
             $controller = $this->resolve($request, $response);
             $params     = $this->getDefaultValueParameters($controller);
             $args       = $this->setArguments($request, $params);
-            $response   = $this->execute($controller, $args);
+            $response   = $this->execute($controller, $args, $response);
             return $response;
         }
 

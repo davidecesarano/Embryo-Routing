@@ -43,7 +43,7 @@
             $callable = \Closure::bind($this->callable, $this->container);
             $params   = $this->getDefaultValueParameters(); 
             $args     = $this->setArguments($request, $response, $params);
-            $response = $this->execute($callable, $args);
+            $response = $this->execute($callable, $args, $response);
             return $response;
         }
 
