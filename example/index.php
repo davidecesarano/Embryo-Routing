@@ -29,7 +29,8 @@
     });
 
     $requestHandler->add(new Embryo\Routing\Middleware\MethodOverrideMiddleware);
-    $requestHandler->add(new Embryo\Routing\Middleware\RoutingMiddleware($container));
+    $requestHandler->add(new Embryo\Routing\Middleware\RoutingMiddleware($router));
+    $requestHandler->add(new Embryo\Routing\Middleware\RequestHandlerMiddleware($container));
     
-    $response = $router->dispatch($request, $response);
+    $response = $requestHandler->dispatch($request, $response);
     $emitter->emit($response);
