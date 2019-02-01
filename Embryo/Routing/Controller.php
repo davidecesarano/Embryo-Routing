@@ -75,4 +75,15 @@
         {
             return $this->container->get($key);
         }
+
+        /**
+         * Reflection service from Container.
+         *
+         * @param string $key
+         * @return mixed
+         */
+        final public function reflection(string $key)
+        {
+            return $this->container->refletcion($key);
+        }
     }
