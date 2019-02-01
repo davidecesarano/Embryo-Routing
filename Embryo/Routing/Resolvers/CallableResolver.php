@@ -13,8 +13,9 @@
     
     use Embryo\Routing\Resolvers\AbstractResolver;
     use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
+    use Psr\Http\Server\{MiddlewareInterface, RequestHandlerInterface};
     
-    class CallableResolver extends AbstractResolver
+    class CallableResolver extends AbstractResolver implements MiddlewareInterface
     {
         /**
          * @var callable $callable
@@ -38,8 +39,10 @@
          * @param ResponseInterface $response 
          * @return ResponseInterface 
          */
-        public function process(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+        public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
+            $this->setRequest($request);
+            $response = $handler->handle($request);
             $callable = \Closure::bind($this->callable, $this->container);
             $params   = $this->getDefaultValueParameters(); 
             $args     = $this->setArguments($request, $response, $params);

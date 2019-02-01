@@ -14,13 +14,10 @@
     use Embryo\Routing\Controller;
     use Embryo\Routing\Resolvers\AbstractResolver;
     use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
+    use Psr\Http\Server\{MiddlewareInterface, RequestHandlerInterface};
     
-    class ControllerResolver extends AbstractResolver
-    {    
-        /**
-         * @var string $controller
-         */
-        private $controller;
+    class ControllerResolver extends AbstractResolver implements MiddlewareInterface
+    {
 
         /**
          * @var string $namespace
@@ -60,8 +57,10 @@
          * @param ResponseInterface $response 
          * @return ResponseInterface 
          */
-        public function process(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+        public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
+            $this->setRequest($request);
+            $response   = $handler->handle($request);
             $controller = $this->resolve($request, $response);
             $params     = $this->getDefaultValueParameters($controller);
             $args       = $this->setArguments($request, $params);

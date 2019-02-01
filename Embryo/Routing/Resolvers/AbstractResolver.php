@@ -56,4 +56,17 @@
                 );
             }
         }
+
+        /**
+         * Set processed request in Container.
+         *
+         * @param ServerRequestInterface $request
+         * @return void
+         */
+        protected function setRequest(ServerRequestInterface $request)
+        {
+            $this->container->set('request', function() use($request){
+                return $request;
+            });
+        }
     }
