@@ -297,9 +297,9 @@
             }
             return $route;
         }
-        
+
         /** 
-         * Match route.
+         * Dispatch routes.
          * 
          * Find the route and return
          * a route object if find it.
@@ -307,10 +307,10 @@
          * @param ServerRequestInterface $request
          * @return RouteInterface|bool
          */
-        public function match(ServerRequestInterface $request)
+        public function dispatch(ServerRequestInterface $request)
         {
             $path   = $request->getUri()->getPath();
-            $method =  $request->getMethod();
+            $method = $request->getMethod();
             $uri    = filter_var($path, FILTER_SANITIZE_URL);
             foreach ($this->routes[$method] as $route) {
                 if ($route->match($uri, $method)) {
@@ -318,52 +318,5 @@
                 }
             }
             return false;
-        }
-        
-        /** 
-         * Dispatching route.
-         * 
-         * @param ServerRequestInterface $request
-         * @param ResponseInterface $response
-         * @return RouteInterface|bool
-         * @throws MethodNotAllowedException
-         * @throws Exception
-         * @throws NotFoundException
-         */
-        public function dispatch(ServerRequestInterface $request, ResponseInterface $response)
-        {
-            $route = $this->match($request);
-            if ($route instanceof RouteInterface) {
-
-                $status = $route->getStatus();
-                switch($status) {
-                    case 200:
-                        return $this->handle($request, $response, $route);
-                    case 405:
-                        throw new MethodNotAllowedException;
-                    default:
-                        throw new Exception('Internal Server Error', 500);
-                }
-                
-            } else {
-                throw new NotFoundException;
-            }
-        }
-
-        /**
-         * Route handler.
-         *
-         * @param ServerRequestInterface $request
-         * @param ResponseInterface $response
-         * @param RouteInterface $route
-         * @return ResponseInterface
-         */
-        public function handle(ServerRequestInterface $request, ResponseInterface $response, RouteInterface $route): ResponseInterface 
-        {
-            foreach ($route->getMiddleware() as $middleware) {
-                $this->requestHandler->add($middleware);
-            }
-            $request = $request->withAttribute('route', $route);
-            return $this->requestHandler->dispatch($request, $response);
         }
     }

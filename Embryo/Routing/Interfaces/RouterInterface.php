@@ -28,6 +28,5 @@
         public function prefix(string $prefix): RouterInterface;
         public function group(callable $callback): RouterInterface;
         public function redirect(string $pattern, string $location, int $code);
-        public function match(ServerRequestInterface $request);
-        public function handle(ServerRequestInterface $request, ResponseInterface $response, RouteInterface $route): ResponseInterface;
+        public function dispatch(ServerRequestInterface $request);
     }
