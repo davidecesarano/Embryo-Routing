@@ -21,9 +21,9 @@
     class RoutingMiddleware implements MiddlewareInterface 
     {   
         /**
-         * @param ContainerInterface $container
+         * @param RouterInterface $router
          */ 
-        private $container;
+        private $router;
 
         /**
          * Set router.
