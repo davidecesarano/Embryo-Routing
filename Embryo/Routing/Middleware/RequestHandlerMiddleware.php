@@ -1,9 +1,9 @@
 <?php 
     
     /**
-     * RoutingMiddleware
+     * RequestHandlerMiddleware
      * 
-     * Middleware to use Router for handler discovery.
+     * Executes request handlers discovered by a router.
      * 
      * @author Davide Cesarano <davide.cesarano@unipegaso.it>
      * @link   https://github.com/davidecesarano/embryo-routing 
@@ -11,15 +11,13 @@
 
     namespace Embryo\Routing\Middleware;
     
-    use RuntimeException;
-    use Embryo\Routing\Interfaces\RouteInterface;
+    use Embryo\Http\Server\RequestHandler;
     use Embryo\Routing\Resolvers\{CallableResolver, ControllerResolver};
-    use Embryo\Routing\Exceptions\{MethodNotAllowedException, NotFoundException};
     use Psr\Container\ContainerInterface;
     use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
     use Psr\Http\Server\{MiddlewareInterface, RequestHandlerInterface};
 
-    class RoutingMiddleware implements MiddlewareInterface 
+    class RequestHandlerMiddleware implements MiddlewareInterface 
     {   
         /**
          * @param ContainerInterface $container
@@ -46,22 +44,29 @@
          */
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
-            $route = $this->container['router']->dispatch($request);
-            if ($route instanceof RouteInterface) {
+            $route      = $request->getAttribute('route');
+            $callback   = $route->getCallback();
+            $namespace  = $route->getNamespace();
+            $middleware = $route->getMiddleware();
+            $response   = $handler->handle($request);
 
-                $status = $route->getStatus();
-                switch($status) {
-                    case 200:
-                        $request = $request->withAttribute('route', $route);
-                        return $handler->handle($request);
-                    case 405:
-                        throw new MethodNotAllowedException;
-                    default:
-                        throw new RuntimeException('Internal Server Error', 500);
-                }
-                
-            } else {
-                throw new NotFoundException;
+            if (!is_callable($callback) && !is_string($callback)) {
+                throw new \InvalidArgumentException('Callback must be a callable or a string.');
             }
+
+            if (is_callable($callback)) {
+                $resolver = new CallableResolver($callback);
+            }
+
+            if (is_string($callback)) {
+                $resolver = new ControllerResolver($callback);
+                $resolver->setNamespace($namespace);
+            }
+            
+            $resolver->setContainer($this->container);
+
+            $requestHandler = new RequestHandler($middleware);
+            $requestHandler->add($resolver);
+            return $requestHandler->dispatch($request, $response);
         }
     }
