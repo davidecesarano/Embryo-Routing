@@ -50,12 +50,15 @@ $router = new Router($requestHandler);
 $router->get('/', function($request, $response){
     return $response->write('Hello World!');
 });
-
-//...
-
+```
+Create PSR-15 middleware queue adding required routing middleware:
+* `MethodOverrideMiddleware` for overriding the HTTP Request Method.
+* `RoutingMiddleware` for match route and handler discovery.
+* `RequestHandlerMiddleware` for executing request handlers discovered by router.
+```php
 $middleware->add(new Embryo\Routing\Middleware\MethodOverrideMiddleware);
-$middleware->add(new Embryo\Routing\Middleware\RoutingMiddleware($container));
-
+$middleware->add(new Embryo\Routing\Middleware\RoutingMiddleware($router));
+$middleware->add(new Embryo\Routing\Middleware\RequestHandlerMiddleware($container));
 $response = $router->dispatch($request, $response);
 ```
 Finally you can produce output of the Response with `Emitter` object.
