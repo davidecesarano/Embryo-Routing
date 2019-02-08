@@ -84,6 +84,6 @@
          */
         final public function reflection(string $key)
         {
-            return $this->container->refletcion($key);
+            return $this->container->reflection($key);
         }
     }
