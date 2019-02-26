@@ -17,15 +17,10 @@
     use Embryo\Routing\Interfaces\{RouteInterface, RouterInterface};
     use Embryo\Routing\Route;
     use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
-    use Psr\Http\Server\{MiddlewareInterface, RequestHandlerInterface};
+    use Psr\Http\Server\MiddlewareInterface;
     
     class Router implements RouterInterface
     {    
-        /**
-         * @var RequestHandlerInterface
-         */
-        private $requestHandler;
-
         /**
          * @var array $routes
          */
@@ -56,17 +51,7 @@
         /**
          * @var array $middleware
          */
-        private $middleware = []; 
-
-        /**
-         * Set request handler.
-         *
-         * @param RequestHandlerInterface $requestHandler
-         */
-        public function __construct(RequestHandlerInterface $requestHandler)
-        {
-            $this->requestHandler = $requestHandler;
-        }
+        private $middleware = [];
 
         /**
          * Set base path.
