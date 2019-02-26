@@ -14,7 +14,7 @@
     $response       = (new ResponseFactory)->createResponse(200);
     $requestHandler = new RequestHandler;
     $emitter        = new Emitter;
-    $router         = new Router($requestHandler);
+    $router         = new Router;
     
     $router->get('/', function($request, $response){
         return $response->write('Hello World!');

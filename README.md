@@ -5,7 +5,7 @@ A lightweight, fast and PSR compatible PHP Router.
 * PSR (7, 11, 15) compatible.
 * Static, dynamic and optional route patterns.
 * Supports GET, POST, PUT, PATCH, DELETE and OPTIONS request methods.
-* Before and after route middlewares.
+* Supports route middlewares.
 * Supports grouping routes.
 * Works in subfolders.
 
@@ -43,23 +43,23 @@ $response       = (new ResponseFactory)->createResponse(200);
 $requestHandler = new RequestHandler;
 $emitter        = new Emitter;
 ```
-Later, you can define the routes with `Router` object (passing request handler in constructor), add the PSR-15 middlewares to the request handler (dispatcher) and execute the route dispatching (this method accepts the ServerRequest and Response).
+Later, you can define the routes with `Router` object:
 ```php
-$router = new Router($requestHandler);
+$router = new Router;
 
 $router->get('/', function($request, $response){
     return $response->write('Hello World!');
 });
 ```
-Create PSR-15 middleware queue adding required routing middleware:
+Now, create PSR-15 middleware queue adding required routing middlewares:
 * `MethodOverrideMiddleware` for overriding the HTTP Request Method.
 * `RoutingMiddleware` for match route and handler discovery.
 * `RequestHandlerMiddleware` for executing request handlers discovered by router.
 ```php
-$middleware->add(new Embryo\Routing\Middleware\MethodOverrideMiddleware);
-$middleware->add(new Embryo\Routing\Middleware\RoutingMiddleware($router));
-$middleware->add(new Embryo\Routing\Middleware\RequestHandlerMiddleware($container));
-$response = $router->dispatch($request, $response);
+$requestHandler->add(new Embryo\Routing\Middleware\MethodOverrideMiddleware);
+$requestHandler->add(new Embryo\Routing\Middleware\RoutingMiddleware($router));
+$requestHandler->add(new Embryo\Routing\Middleware\RequestHandlerMiddleware($container));
+$response = $requestHandler->dispatch($request, $response);
 ```
 Finally you can produce output of the Response with `Emitter` object.
 ```php
