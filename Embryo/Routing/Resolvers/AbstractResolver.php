@@ -49,7 +49,7 @@
             } elseif (is_null($return) || is_scalar($return) || (is_object($return) && method_exists($return, '__toString'))) {
                 return $response->write($return);
             } elseif (is_array($return)) {
-                return $response->withJson($return);
+                return $response->withJson($return, null, 32);
             } else {
                 throw new \UnexpectedValueException(
                     'The value returned must be scalar, array or an object with __toString method'
