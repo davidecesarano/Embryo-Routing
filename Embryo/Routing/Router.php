@@ -59,7 +59,7 @@
          * @param string $basePath
          * @return RouterInterface
          */
-        public function setBasePath($basePath): RouterInterface
+        public function setBasePath(string $basePath): RouterInterface
         {
             $this->basePath = $basePath;
             return $this;
