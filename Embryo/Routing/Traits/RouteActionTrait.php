@@ -26,11 +26,11 @@
 
             if (is_array($middleware)) {
                 foreach ($middleware as $m) {
-                    array_merge($this->middleware, $m);
+                    array_push($this->middleware, $m);
                 }    
             }
 
-            array_merge($this->middleware, $middleware);
+            array_push($this->middleware, $middleware);
             return $this;
         }
 
