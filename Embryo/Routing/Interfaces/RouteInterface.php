@@ -19,8 +19,7 @@
         public function getNamespace(): string;
         public function withMiddleware(array $middleware): RouteInterface;
         public function getMiddleware(): array;
-        public function withMethods(array $methods): RouteInterface;
-        public function getMethods(): array;
+        public function withMethod(string $methods): RouteInterface;
         public function getMethod(): string;
         public function withPattern(string $pattern): RouteInterface;
         public function getPattern(): string;

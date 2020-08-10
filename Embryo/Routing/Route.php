@@ -36,11 +36,6 @@
          * @var string $method
          */
         protected $method;
-
-        /**
-         * @var array $methods 
-         */
-        private $methods = [];
         
         /**
          * @var string $pattern 
@@ -210,32 +205,22 @@
          */
         
         /**
-         * Returns an instance with the specified methods.
+         * Returns an instance with the specified method.
          *
          * @param array $methods
          * @return RouteInterface
          */
-        public function withMethods(array $methods): RouteInterface
+        public function withMethod(string $method): RouteInterface
         {
             $clone = clone $this;
-            $clone->methods = $methods;
+            $clone->method = $method;
             return $clone;
         }
 
         /**
-         * Returns methods.
+         * Returns method.
          * 
          * @return array
-         */
-        public function getMethods(): array
-        {
-            return $this->methods;
-        }
-
-        /**
-         * Returns route method.
-         * 
-         * @return string
          */
         public function getMethod(): string
         {
@@ -406,12 +391,10 @@
 
             if (preg_match('#^'.$pattern.'$#i', $uri, $arguments)) {
 
-                if (!in_array($method, $this->methods)) {
+                if ($method !== $this->getMethod()) {
                     $this->setStatus(405);
-                    $this->setMethod($this->methods[0]);
                 } else {
                     $this->setStatus(200);
-                    $this->setMethod($method);
                 }
 
                 $this->setUri($uri);

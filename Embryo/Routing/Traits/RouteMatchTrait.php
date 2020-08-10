@@ -78,18 +78,6 @@
         }
 
         /**
-         * Set method.
-         * 
-         * @param string $method
-         * @return self
-         */
-        protected function setMethod(string $method): self
-        {
-            $this->method = $method;
-            return $this;
-        }
-
-        /**
          * Set route path.
          *
          * @param string $routePath
