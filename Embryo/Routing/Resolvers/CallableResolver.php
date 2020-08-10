@@ -69,6 +69,7 @@
          * Set and return arguments.
          * 
          * @param ServerRequestInterface $request
+         * @param ResponseInterface $response
          * @param array $params
          * @return array 
          */

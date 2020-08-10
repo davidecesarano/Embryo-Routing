@@ -11,14 +11,12 @@
 
     namespace Embryo\Routing\Resolvers;
     
-    use Embryo\Routing\Controller;
     use Embryo\Routing\Resolvers\AbstractResolver;
     use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
     use Psr\Http\Server\{MiddlewareInterface, RequestHandlerInterface};
     
     class ControllerResolver extends AbstractResolver implements MiddlewareInterface
     {
-
         /**
          * @var string $namespace
          */
@@ -28,7 +26,6 @@
          * Set container.
          * 
          * @param string $controller 
-         * @return self
          */
         public function __construct(string $controller)
         {
@@ -74,6 +71,7 @@
          * @param ServerRequestInterface $request 
          * @param ResponseInterface $response 
          * @return array
+         * @throws RuntimeException
          */
         private function resolve(ServerRequestInterface $request, ResponseInterface $response): array
         {
@@ -100,6 +98,7 @@
         /**
          * Return default value parameters.
          *
+         * @param array $controller
          * @return array
          */
         private function getDefaultValueParameters(array $controller): array

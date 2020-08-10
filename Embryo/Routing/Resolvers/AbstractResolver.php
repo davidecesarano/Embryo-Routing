@@ -11,7 +11,6 @@
 
     namespace Embryo\Routing\Resolvers;
 
-    use Embryo\Http\Factory\ResponseFactory;
     use Psr\Container\ContainerInterface;
     use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
@@ -39,6 +38,7 @@
          * @param array $args
          * @param ResponseInterface $response
          * @return ResponseInterface
+         * @throws UnexpectedValueException
          */
         protected function execute(callable $callable, array $args, ResponseInterface $response): ResponseInterface
         { 
