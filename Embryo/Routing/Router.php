@@ -12,11 +12,9 @@
 
     namespace Embryo\Routing;
 
-    use Exception;
-    use Embryo\Routing\Exceptions\{MethodNotAllowedException, NotFoundException};
     use Embryo\Routing\Interfaces\{RouteInterface, RouterInterface};
     use Embryo\Routing\Route;
-    use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
+    use Psr\Http\Message\ServerRequestInterface;
     use Psr\Http\Server\MiddlewareInterface;
     
     class Router implements RouterInterface
@@ -24,14 +22,7 @@
         /**
          * @var array $routes
          */
-        private $routes = [
-            'GET'     => [], 
-            'POST'    => [],
-            'PUT'     => [],
-            'PATCH'   => [],
-            'DELETE'  => [],
-            'OPTIONS' => []
-        ];
+        private $routes = [];
 
         /**
          * @var string $basePath
@@ -278,7 +269,7 @@
             $route = $route->withCallback($callback);
 
             foreach ($methods as $method) {
-                array_push($this->routes[$method], $route);
+                $this->routes[] = $route;
             }
             return $route;
         }
@@ -297,11 +288,16 @@
             $path   = $request->getUri()->getPath();
             $method = $request->getMethod();
             $uri    = filter_var($path, FILTER_SANITIZE_URL);
-            foreach ($this->routes[$method] as $route) {
+            $routes = [];
+
+            foreach ($this->routes as $route) {
                 if ($route->match($uri, $method)) {
-                    return $route;
+                    $routes[$route->getMethod()] = $route;
                 }
             }
-            return false;
+
+            if (empty($routes)) return false;
+            if (isset($routes[$method])) return $routes[$method];
+            return reset($routes);
         }
     }

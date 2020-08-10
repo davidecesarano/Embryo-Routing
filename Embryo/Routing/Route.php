@@ -12,7 +12,6 @@
     use Embryo\Routing\Interfaces\RouteInterface;
     use Embryo\Routing\Traits\RouteActionTrait;
     use Embryo\Routing\Traits\RouteMatchTrait;
-    use Psr\Container\ContainerInterface;
     
     class Route implements RouteInterface
     {    
@@ -165,7 +164,7 @@
         }
 
         /**
-         * Restituisce il namespace della rotta
+         * Return the route's namespace.
          *
          * @return string
          */
@@ -344,6 +343,11 @@
          * ------------------------------------------------------------
          */
 
+        /**
+         * Return uri.
+         * 
+         * @return string
+         */
         public function getUri(): string
         {
             return $this->uri;
@@ -390,8 +394,6 @@
         /**
          * Match route from uri and http request method.
          * 
-         * If methdo does not exists return false.
-         * 
          * @param string $uri 
          * @param string $method 
          * @return bool
@@ -406,13 +408,15 @@
 
                 if (!in_array($method, $this->methods)) {
                     $this->setStatus(405);
+                    $this->setMethod($this->methods[0]);
+                } else {
+                    $this->setStatus(200);
+                    $this->setMethod($method);
                 }
 
                 $this->setUri($uri);
-                $this->setMethod($method);
                 $this->setRoutePath($path);
                 $this->setArguments($arguments, $path);
-                $this->setStatus(200);
                 return true;
 
             } else {
