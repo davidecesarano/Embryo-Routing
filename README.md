@@ -90,8 +90,9 @@ You can define application routes using methods on the Router object. Every meth
 // GET Route
 $router->get('/blog/{id}', function($request, $response, $id) {
     return $response->write('This is post with id '.$id);
-}
+});
 ```
+Note that you can write pattern with or without "/" to first character like this: `blog/{id}`.
 
 #### Methods
 Embryo Routing supports GET, POST, PUT, PATCH, DELETE and OPTIONS request methods. Every request method corresponds to a method of the Router object: `get()`, `post()`, `put()`, `patch()`, `delete()` and `options()`.
@@ -100,12 +101,12 @@ You can use `all()` and `match()` methods for supporting all methods or specific
 // All methods
 $router->all('pattern', function($request, $response) {
     //...
-}
+});
 
 // Match methods
 $router->match(['GET', 'POST'], 'pattern', function($request, $response) {
     //...
-}
+});
 ```
 
 #### Overriding the request method
@@ -146,6 +147,15 @@ If you use a Closure instance as the route callback, the closure’s state is bo
 ```php
 $router->get('/hello/{name}', function ($request, $response, $name) {
     $this->get('session')->set('name', $name);
+});
+```
+
+#### Access to current route
+If you get the route's object, you can it using the request attribute:
+```php
+$router->get('/hello/{name}', function ($request, $response, $name) {
+    $route = $request->getAttribute('route');
+    echo $route->getUri(); // /hello/name
 });
 ```
 
@@ -211,22 +221,6 @@ $router->prefix('/api')->group(function($router){
 });
 ```
 In this example URI is, for example, /api/user/1.
-
-#### CRUD routes
-The `crud()` method introduces the ability to write the group of crud routes:
-```php
-$router->crud('/users', 'User');
-```
-This code snippet is equal to:
-```php
-$router->get('/users', 'User@index');
-$router->get('/users/create', 'User@create');
-$router->post('/users', 'User@store');
-$router->get('/users/{id}', 'User@show');
-$router->get('/users/{id}/edit', 'User@edit');
-$router->put('/users/{id}', 'User@update');
-$router->delete('/users/{id}', 'User@destroy');
-```
 
 ### Add middleware to route
 You can also attach a PSR-15 middleware to any route or route group.
