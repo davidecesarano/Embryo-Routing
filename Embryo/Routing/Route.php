@@ -33,9 +33,9 @@
         private $namespace;
         
         /**
-         * @var string $method
+         * @var array $methods
          */
-        protected $method;
+        protected $methods;
         
         /**
          * @var string $pattern 
@@ -125,7 +125,7 @@
         public function withPrefix(array $prefix): RouteInterface
         {
             $clone = clone $this;
-            $clone->prefix = (!empty($prefix)) ? implode('', $prefix) : '';
+            $clone->prefix = (!empty($prefix)) ? '/'.implode('/', $prefix) : '';
             return $clone;
         }
 
@@ -205,26 +205,26 @@
          */
         
         /**
-         * Returns an instance with the specified method.
+         * Returns an instance with the specified methods.
          *
          * @param array $methods
          * @return RouteInterface
          */
-        public function withMethod(string $method): RouteInterface
+        public function withMethods(array $methods): RouteInterface
         {
             $clone = clone $this;
-            $clone->method = $method;
+            $clone->methods = $methods;
             return $clone;
         }
 
         /**
-         * Returns method.
+         * Returns methods.
          * 
          * @return array
          */
-        public function getMethod(): string
+        public function getMethods(): array
         {
-            return $this->method;
+            return $this->methods;
         }
 
         /**
@@ -242,7 +242,7 @@
         public function withPattern(string $pattern): RouteInterface
         {
             $clone = clone $this;
-            $clone->pattern = $pattern;
+            $clone->pattern = '/'.trim($pattern, '/');
             return $clone;
         }
 
@@ -391,7 +391,7 @@
 
             if (preg_match('#^'.$pattern.'$#i', $uri, $arguments)) {
 
-                if ($method !== $this->getMethod()) {
+                if (!in_array($method, $this->getMethods())) {
                     $this->setStatus(405);
                 } else {
                     $this->setStatus(200);

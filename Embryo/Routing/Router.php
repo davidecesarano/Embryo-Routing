@@ -73,9 +73,9 @@
          *
          * @param string $pattern
          * @param mixed $callback
-         * @return self
+         * @return RouteInterface
          */
-        public function get(string $pattern, $callback): self
+        public function get(string $pattern, $callback): RouteInterface
         {
             return $this->add(['GET'], $pattern, $callback);
         }
@@ -85,9 +85,9 @@
          *
          * @param string $pattern
          * @param mixed $callback
-         * @return self
+         * @return RouteInterface
          */
-        public function post(string $pattern, $callback): self
+        public function post(string $pattern, $callback): RouteInterface
         {
             return $this->add(['POST'], $pattern, $callback);
         }
@@ -97,9 +97,9 @@
          *
          * @param string $pattern
          * @param mixed $callback
-         * @return self
+         * @return RouteInterface
          */
-        public function put(string $pattern, $callback): self
+        public function put(string $pattern, $callback): RouteInterface
         {
             return $this->add(['PUT'], $pattern, $callback);
         }
@@ -109,9 +109,9 @@
          *
          * @param string $pattern
          * @param mixed $callback
-         * @return self
+         * @return RouteInterface
          */
-        public function patch(string $pattern, $callback): self
+        public function patch(string $pattern, $callback): RouteInterface
         {
             return $this->add(['PATCH'], $pattern, $callback);
         }
@@ -121,9 +121,9 @@
          *
          * @param string $pattern
          * @param mixed $callback
-         * @return self
+         * @return RouteInterface
          */
-        public function delete(string $pattern, $callback): self
+        public function delete(string $pattern, $callback): RouteInterface
         {
             return $this->add(['DELETE'], $pattern, $callback);
         }
@@ -133,9 +133,9 @@
          *
          * @param string $pattern
          * @param mixed $callback
-         * @return self
+         * @return RouteInterface
          */
-        public function options(string $pattern, $callback): self
+        public function options(string $pattern, $callback): RouteInterface
         {
             return $this->add(['OPTIONS'], $pattern, $callback);
         }
@@ -146,9 +146,9 @@
          * @param array $methdos
          * @param string $pattern
          * @param mixed $callback
-         * @return self
+         * @return RouteInterface
          */
-        public function map(array $methods, string $pattern, $callback): self
+        public function map(array $methods, string $pattern, $callback): RouteInterface
         {
             return $this->add($methods, $pattern, $callback);
         }
@@ -158,30 +158,11 @@
          *
          * @param string $pattern
          * @param mixed $callback
-         * @return self
+         * @return RouteInterface
          */
-        public function all(string $pattern, $callback): self
+        public function all(string $pattern, $callback): RouteInterface
         {
             return $this->add(['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], $pattern, $callback);            
-        }
-
-        /**
-         * Create CRUD routes.
-         *
-         * @param string $pattern
-         * @param string $class
-         * @param string $regex
-         * @return void
-         */
-        public function crud(string $pattern, string $class, string $regex = '{param}')
-        {
-            $this->get($pattern, $class.'@index');
-            $this->get($pattern.'/create', $class.'@create');
-            $this->post($pattern, $class.'@store');
-            $this->get($pattern.'/'.$regex, $class.'@show');
-            $this->get($pattern.'/'.$regex.'/edit', $class.'@edit');
-            $this->put($pattern.'/'.$regex, $class.'@update');
-            $this->delete($pattern.'/'.$regex, $class.'@destroy');
         }
 
         /**
@@ -215,7 +196,7 @@
          */
         public function prefix(string $prefix): RouterInterface
         {
-            $this->prefix[] = $prefix;
+            $this->prefix[] = trim($prefix, '/');
             return $this;
         }
 
@@ -255,22 +236,21 @@
          * @param array $methods
          * @param string $pattern
          * @param string|callable $callback
-         * @return self
+         * @return RouteInterface
          */
-        private function add(array $methods, string $pattern, $callback): self
+        private function add(array $methods, string $pattern, $callback): RouteInterface
         {
-            foreach ($methods as $method) {
-                $route = new Route;
-                $route = $route->withBasePath($this->basePath);
-                $route = $route->withPrefix($this->prefix);
-                $route = $route->withNamespace($this->namespace);
-                $route = $route->withMiddleware($this->middleware);
-                $route = $route->withMethod($method);
-                $route = $route->withPattern($pattern);
-                $route = $route->withCallback($callback);
-                $this->routes[] = $route;
-            }
-            return $this;
+            $route = new Route;
+            $route = $route->withBasePath($this->basePath);
+            $route = $route->withPrefix($this->prefix);
+            $route = $route->withNamespace($this->namespace);
+            $route = $route->withMiddleware($this->middleware);
+            $route = $route->withMethods($methods);
+            $route = $route->withPattern($pattern);
+            $route = $route->withCallback($callback);
+            
+            $this->routes[] = $route;
+            return $route;
         }
 
         /** 
@@ -291,7 +271,9 @@
 
             foreach ($this->routes as $route) {
                 if ($route->match($uri, $method)) {
-                    $routes[$route->getMethod()] = $route;
+                    foreach ($route->getMethods() as $routeMethod) {
+                        $routes[$routeMethod] = $route;
+                    }
                 }
             }
 

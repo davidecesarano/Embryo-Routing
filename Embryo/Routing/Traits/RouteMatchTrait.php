@@ -73,7 +73,7 @@
          */
         protected function setUri(string $uri): self
         {
-            $this->uri = $uri;
+            $this->uri = ($uri === '') ? '/' : $uri;
             return $this;
         }
 
@@ -85,7 +85,7 @@
          */
         protected function setRoutePath(string $routePath): self
         {
-            $this->routePath = $routePath;
+            $this->routePath = ($routePath === '') ? '/' : $routePath;
             return $this;
         }
 
