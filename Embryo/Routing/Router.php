@@ -272,7 +272,9 @@
             foreach ($this->routes as $route) {
                 if ($route->match($uri, $method)) {
                     foreach ($route->getMethods() as $routeMethod) {
-                        $routes[$routeMethod] = $route;
+                        if (!isset($routes[$routeMethod])) {
+                            $routes[$routeMethod] = $route;
+                        }
                     }
                 }
             }
