@@ -48,7 +48,7 @@
         private $callback;
 
         /**
-         * @var string $path
+         * @var string $routePath
          */
         protected $routePath = '';
 
@@ -267,7 +267,7 @@
          *
          * @param string|callable $callback
          * @return RouteInterface
-         * @throws InvalidArgumentException
+         * @throws \InvalidArgumentException
          */
         public function withCallback($callback): RouteInterface
         {
@@ -385,9 +385,10 @@
          */
         public function match(string $uri, string $method): bool
         {
-            $uri     = rtrim($uri, '/');
+            $uri     = trim($uri, '/');
             $path    = $this->composeRoutePath();
             $pattern = $this->getRouteRegexPath($path);
+            $pattern = ltrim($pattern, '/');
 
             if (preg_match('#^'.$pattern.'$#i', $uri, $arguments)) {
 

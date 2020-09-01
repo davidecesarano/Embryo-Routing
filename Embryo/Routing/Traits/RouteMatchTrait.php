@@ -40,7 +40,7 @@
          * 
          * @param string $path
          * @return string
-         * @throws InvalidArgumentException
+         * @throws \InvalidArgumentException
          */
         protected function getRouteRegexPath(string $path): string
         {
@@ -73,7 +73,7 @@
          */
         protected function setUri(string $uri): self
         {
-            $this->uri = ($uri === '') ? '/' : $uri;
+            $this->uri = ($uri === '') ? '/' : '/'.$uri;
             return $this;
         }
 
@@ -119,7 +119,8 @@
                     $values[$k] = (!isset($params[$k])) ? null : ltrim($params[$k], '/');
                 }
 
-                $this->arguments = array_combine($keys, $values);
+                $combine = array_combine($keys, $values);
+                $this->arguments =  $combine ? $combine : [];
 
             } else {
                 $this->arguments = [];
