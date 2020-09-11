@@ -143,7 +143,7 @@
         /**
          * Map route with specific HTTP methods.
          *
-         * @param array $methdos
+         * @param array $methods
          * @param string $pattern
          * @param mixed $callback
          * @return RouteInterface
@@ -170,7 +170,7 @@
          *
          * @param string|array|MiddlewareInterface $middleware
          * @return RouterInterface
-         * @throws InvalidArgumentException
+         * @throws \InvalidArgumentException
          */
         public function middleware($middleware): RouterInterface
         {
@@ -182,9 +182,9 @@
                 foreach ($middleware as $m) {
                     $this->middleware[] = $m;
                 }    
+            } else {
+                $this->middleware[] = $middleware;
             }
-
-            $this->middleware[] = $middleware;
             return $this;
         }
 
