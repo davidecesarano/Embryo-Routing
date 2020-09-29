@@ -221,8 +221,9 @@
          * @param string $pattern
          * @param string $location
          * @param int $code
+         * @return void
          */
-        public function redirect(string $pattern, string $location, int $code = 302)
+        public function redirect(string $pattern, string $location, int $code = 302): void
         {
             $this->add(['GET'], $pattern, function($request, $response) use($location, $code){
                 $response = $response->withStatus($code);

@@ -46,7 +46,7 @@
         /**
          * Set Request.
          *
-         * @param ContainerInterface $container
+         * @param ServerRequestInterface $request
          * @return void
          */
         final public function setRequest(ServerRequestInterface $request)
@@ -57,7 +57,7 @@
         /**
          * Set Response.
          *
-         * @param ContainerInterface $container
+         * @param ResponseInterface $response
          * @return void
          */
         final public function setResponse(ResponseInterface $response)

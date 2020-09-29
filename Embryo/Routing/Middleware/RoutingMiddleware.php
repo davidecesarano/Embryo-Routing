@@ -21,7 +21,7 @@
     class RoutingMiddleware implements MiddlewareInterface 
     {   
         /**
-         * @param RouterInterface $router
+         * @var RouterInterface $router
          */ 
         private $router;
 
@@ -41,7 +41,9 @@
          * @param ServerRequestInterface $request 
          * @param RequestHandlerInterface $handler 
          * @return ResponseInterface 
-         * @throws InvalidArgumentException
+         * @throws MethodNotAllowedException
+         * @throws RuntimeException
+         * @throws NotFoundException
          */
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {

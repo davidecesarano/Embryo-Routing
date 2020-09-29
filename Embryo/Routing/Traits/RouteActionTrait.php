@@ -17,7 +17,7 @@
          *
          * @param string|array|MiddlewareInterface $middleware
          * @return self 
-         * @throws InvalidArgumentException
+         * @throws \InvalidArgumentException
          */
         public function middleware($middleware): self
         {

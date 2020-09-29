@@ -45,8 +45,12 @@
         protected function getRouteRegexPath(string $path): string
         {
             $arguments = $this->getArguments();
-            return preg_replace_callback('#({\w+}|\[\/{\w+}\])#', function($params) use($arguments){
+            $replace = preg_replace_callback('#({\w+}|\[\/{\w+}\])#', function($params) use($arguments){
                 
+                if (!is_string($params[0])) {
+                    throw new \InvalidArgumentException('Format route regex params not valid!');
+                }
+
                 $name = str_replace('{', '', $params[0]);
                 $name = str_replace('}', '', $name);
                 $name = str_replace('?', '', $name);
@@ -63,6 +67,8 @@
                 }
 
             }, $path);
+
+            return $replace ? $replace : '';
         }
 
         /**

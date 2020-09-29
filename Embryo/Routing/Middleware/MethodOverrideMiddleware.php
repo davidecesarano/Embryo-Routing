@@ -62,13 +62,14 @@
          * @param ServerRequestInterface $request
          * @return string
          */
-        private function getOverrideMethod(ServerRequestInterface $request)
+        private function getOverrideMethod(ServerRequestInterface $request): string
         {
             if ($request->getMethod() === 'POST') {
                 
                 $params = $request->getParsedBody();
-                if (isset($params[$this->parsedBodyParameter])) {
-                    return strtoupper($params[$this->parsedBodyParameter]);
+                $param = $this->parsedBodyParameter;
+                if (is_array($params) && isset($params[$param])) {
+                    return strtoupper($params[$param]);
                 }
             
             } elseif ($request->getMethod() === 'GET') {

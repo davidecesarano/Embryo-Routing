@@ -20,7 +20,7 @@
     class RequestHandlerMiddleware implements MiddlewareInterface 
     {   
         /**
-         * @param ContainerInterface $container
+         * @var ContainerInterface $container
          */ 
         private $container;
 
@@ -40,7 +40,7 @@
          * @param ServerRequestInterface $request 
          * @param RequestHandlerInterface $handler 
          * @return ResponseInterface 
-         * @throws InvalidArgumentException
+         * @throws \RuntimeException
          */
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
@@ -49,22 +49,17 @@
             $namespace  = $route->getNamespace();
             $middleware = $route->getMiddleware();
             $response   = $handler->handle($request);
-
-            if (!is_callable($callback) && !is_string($callback)) {
-                throw new \InvalidArgumentException('Callback must be a callable or a string.');
-            }
-
+            
             if (is_callable($callback)) {
                 $resolver = new CallableResolver($callback);
-            }
-
-            if (is_string($callback)) {
+            } else if (is_string($callback)) {
                 $resolver = new ControllerResolver($callback);
                 $resolver->setNamespace($namespace);
+            } else {
+                throw new \RuntimeException('Callback must be a callable or a string.');
             }
             
             $resolver->setContainer($this->container);
-
             $requestHandler = new RequestHandler($middleware);
             $requestHandler->add($resolver);
             return $requestHandler->dispatch($request, $response);
