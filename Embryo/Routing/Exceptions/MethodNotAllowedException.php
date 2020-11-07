@@ -15,6 +15,6 @@
          */
         public function __construct($message = 'Method Not Allowed')
         {
-            parent::__construct($message, 404);
+            parent::__construct($message, 405);
         }
     }
