@@ -77,13 +77,13 @@
         }
 
         /**
-         * Reflection service from Container.
+         * Alias of get method.
          *
          * @param string $key
          * @return mixed
          */
         final public function reflection(string $key)
         {
-            return $this->container->reflection($key);
+            return $this->get($key);
         }
     }

@@ -11,22 +11,23 @@
 
     namespace Embryo\Routing\Resolvers;
 
-    use Psr\Container\ContainerInterface;
+    use Embryo\Container\Interfaces\ContainerBuilderInterface;
     use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
     abstract class AbstractResolver 
     {
         /**
-         * @var ContainerInterface $container
+         * @var ContainerBuilderInterface $container
          */
         protected $container;
 
         /**
          * Set container.
          * 
-         * @param ContainerInterface $container 
+         * @param ContainerBuilderInterface $container 
+         * @return void
          */
-        public function setContainer(ContainerInterface $container)
+        public function setContainer(ContainerBuilderInterface $container): void
         {
             $this->container = $container;
         }
@@ -38,7 +39,8 @@
          * @param array $args
          * @param ResponseInterface $response
          * @return ResponseInterface
-         * @throws UnexpectedValueException
+         * @throws \UnexpectedValueException
+         * @throws \RuntimeException
          */
         protected function execute(callable $callable, array $args, ResponseInterface $response): ResponseInterface
         { 
@@ -46,10 +48,23 @@
 
             if ($return instanceof ResponseInterface) {
                 return $return;
-            } elseif (is_null($return) || is_scalar($return) || (is_object($return) && method_exists($return, '__toString'))) {
-                return $response->write($return);
+            } elseif (is_scalar($return) || (is_object($return) && method_exists($return, '__toString'))) {
+                
+                $body = $response->getBody();
+                $body->write(strval($return));
+                return $response->withBody($body);
+
             } elseif (is_array($return)) {
-                return $response->withJson($return, null, 32);
+                
+                $json = json_encode($return, 32);
+                if ($json === false) {
+                    throw new \RuntimeException(json_last_error_msg(), json_last_error());
+                }
+                $body = $response->getBody();
+                $body->write($json);
+                $response = $response->withBody($body);
+                return $response->withHeader('Content-Type', 'application/json;charset=utf-8');
+
             } else {
                 throw new \UnexpectedValueException(
                     'The value returned must be scalar, array or an object with __toString method'

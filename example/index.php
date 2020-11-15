@@ -2,14 +2,14 @@
 
     require __DIR__.'/../vendor/autoload.php';
 
-    use Embryo\Container\Container;
+    use Embryo\Container\ContainerBuilder;
     use Embryo\Http\Emitter\Emitter;
     use Embryo\Http\Factory\ServerRequestFactory;
     use Embryo\Http\Factory\ResponseFactory;
     use Embryo\Http\Server\RequestHandler;
     use Embryo\Routing\Router;
 
-    $container      = new Container;
+    $container      = new ContainerBuilder;
     $request        = (new ServerRequestFactory)->createServerRequestFromServer();
     $response       = (new ResponseFactory)->createResponse(200);
     $requestHandler = new RequestHandler;

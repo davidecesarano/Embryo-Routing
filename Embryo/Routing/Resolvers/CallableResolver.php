@@ -36,14 +36,15 @@
          * Process a server request and return a response.
          * 
          * @param ServerRequestInterface $request 
-         * @param ResponseInterface $response 
+         * @param RequestHandlerInterface $handler 
          * @return ResponseInterface 
          */
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
             $this->setRequest($request);
             $response = $handler->handle($request);
-            $callable = \Closure::bind($this->callable, $this->container);
+            $closure  = $this->callable;
+            $callable = \Closure::bind($closure, $this->container->build());
             $params   = $this->getDefaultValueParameters(); 
             $args     = $this->setArguments($request, $response, $params);
             $response = $this->execute($callable, $args, $response);

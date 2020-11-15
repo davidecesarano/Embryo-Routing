@@ -11,25 +11,25 @@
 
     namespace Embryo\Routing\Middleware;
     
+    use Embryo\Container\Interfaces\ContainerBuilderInterface;
     use Embryo\Http\Server\RequestHandler;
     use Embryo\Routing\Resolvers\{CallableResolver, ControllerResolver};
-    use Psr\Container\ContainerInterface;
     use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
     use Psr\Http\Server\{MiddlewareInterface, RequestHandlerInterface};
 
     class RequestHandlerMiddleware implements MiddlewareInterface 
     {   
         /**
-         * @var ContainerInterface $container
+         * @var ContainerBuilderInterface $container
          */ 
         private $container;
 
         /**
          * Set container.
          *
-         * @param ContainerInterface $container
+         * @param ContainerBuilderInterface $container
          */
-        public function __construct(ContainerInterface $container)
+        public function __construct(ContainerBuilderInterface $container)
         {
             $this->container = $container;
         }

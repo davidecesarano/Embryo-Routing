@@ -23,14 +23,20 @@
         private $namespace;
 
         /**
-         * Set container.
+         * @var string $controller
+         */
+        private $controller;
+
+        /**
+         * Set controller.
          * 
          * @param string $controller 
+         * @throws \InvalidArgumentException
          */
         public function __construct(string $controller)
         {
             if (strpos($controller, '@') === false) {
-                throw new \InvalidArgumentException("$controller must be a 'class@method' string.");
+                throw new \InvalidArgumentException("$controller must be a 'class@method' string");
             }
             $this->controller = $controller;
         }
@@ -51,7 +57,7 @@
          * Process a server request and return a response.
          * 
          * @param ServerRequestInterface $request 
-         * @param ResponseInterface $response 
+         * @param RequestHandlerInterface $handler 
          * @return ResponseInterface 
          */
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -71,7 +77,7 @@
          * @param ServerRequestInterface $request 
          * @param ResponseInterface $response 
          * @return array
-         * @throws RuntimeException
+         * @throws \RuntimeException
          */
         private function resolve(ServerRequestInterface $request, ResponseInterface $response): array
         {
@@ -87,8 +93,8 @@
                 throw new \RuntimeException("$method method of the ".get_class($class)." class does not exist");
             }
 
-            $class = $this->container->reflection($class);
-            $class->setContainer($this->container);
+            $class = $this->container->get($class);
+            $class->setContainer($this->container->build());
             $class->setRequest($request);
             $class->setResponse($response);
 
