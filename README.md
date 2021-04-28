@@ -65,12 +65,6 @@ Finally you can produce output of the Response with `Emitter` object.
 ```php
 $emitter->emit($response);
 ```
-You may quickly test this using the built-in PHP server:
-```
-$ cd example
-$ php -S localhost:8000
-```
-Going to http://localhost:8000 will now display "Hello World!".
 
 ## Usage
 * [Create routes](#create-routes)
@@ -96,7 +90,7 @@ Note that you can write pattern with or without "/" to first character like this
 
 #### Methods
 Embryo Routing supports GET, POST, PUT, PATCH, DELETE and OPTIONS request methods. Every request method corresponds to a method of the Router object: `get()`, `post()`, `put()`, `patch()`, `delete()` and `options()`.
-You can use `all()` and `match()` methods for supporting all methods or specific route methods.
+You can use `all()` and `map()` methods for supporting all methods or specific route methods.
 ```php
 // All methods
 $router->all('pattern', function($request, $response) {
@@ -104,7 +98,7 @@ $router->all('pattern', function($request, $response) {
 });
 
 // Match methods
-$router->match(['GET', 'POST'], 'pattern', function($request, $response) {
+$router->map(['GET', 'POST'], 'pattern', function($request, $response) {
     //...
 });
 ```
