@@ -8,6 +8,8 @@
      */
 
     namespace Embryo\Routing\Traits;
+
+    use Embryo\Routing\Interfaces\RouteInterface;
     use Psr\Http\Server\MiddlewareInterface;
 
     trait RouteActionTrait 
@@ -16,10 +18,10 @@
          * Sets one or more middleware for specific route.
          *
          * @param string|array|MiddlewareInterface $middleware
-         * @return self 
+         * @return RouteInterface 
          * @throws \InvalidArgumentException
          */
-        public function middleware($middleware): self
+        public function middleware($middleware): RouteInterface
         {
             if (!is_string($middleware) && !is_array($middleware) && !$middleware instanceof MiddlewareInterface) {
                 throw new \InvalidArgumentException('Middleware must be a string, an array or an instance of MiddlewareInterface');
@@ -40,9 +42,9 @@
          *
          * @param string|array $name 
          * @param string|null $regex
-         * @return self 
+         * @return RouteInterface 
          */
-        public function where($name, $regex = null): self
+        public function where($name, $regex = null): RouteInterface
         {
             if (is_string($name) && is_string($regex)) {
                 $this->arguments[$name] = $regex;
@@ -60,9 +62,9 @@
          * Sets name of specific route.
          *
          * @param string $name
-         * @return self
+         * @return RouteInterface
          */
-        public function name(string $name): self
+        public function name(string $name): RouteInterface
         {
             $this->name = $name;
             return $this;

@@ -59,9 +59,9 @@
                 $name = str_replace(']', '', $name);
                 
                 if (preg_match('#\[\/{\w+}\]#', $params[0])) {
-                    return (isset($arguments[$name])) ? '('.$arguments[$name].')?' : '(\/[\w]+)?';
+                    return (isset($arguments[$name])) ? '(\/'.$arguments[$name].')?' : '(\/[\w\-\[\]\.\@\!\'\(\)\*\+\:\,\;\=\&\$\~\%]+)?';
                 } else if (preg_match('#{\w+}#', $params[0])) {
-                    return (isset($arguments[$name])) ? '('.$arguments[$name].')' : '(\w+)';
+                    return (isset($arguments[$name])) ? '('.$arguments[$name].')' : '([\w\-\[\]\.\@\!\'\(\)\*\+\:\,\;\=\&\$\~\%]+)';
                 } else {
                     throw new \InvalidArgumentException('Format route path not valid!');
                 }
@@ -126,7 +126,7 @@
                 }
 
                 $combine = array_combine($keys, $values);
-                $this->arguments =  $combine ? $combine : [];
+                $this->arguments = $combine ? $combine : [];
 
             } else {
                 $this->arguments = [];
