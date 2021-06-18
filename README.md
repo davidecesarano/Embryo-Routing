@@ -83,7 +83,7 @@ $emitter->emit($response);
 ### Create routes
 You can define application routes using methods on the Router object. Every method accepts two arguments:
 * The route pattern (with optional placeholders)
-* The route callback (a closure or a `class@method` string)
+* The route callback (a closure, a `class@method` string or a `['class', 'method']` array)
 ```php
 // GET Route
 $router->get('/blog/{id}', function(Request $request, Response $response, int $id) {
