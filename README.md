@@ -7,6 +7,7 @@ A lightweight, fast and PSR compatible PHP Router.
 * Supports GET, POST, PUT, PATCH, DELETE and OPTIONS request methods.
 * Supports route middlewares.
 * Supports grouping routes.
+* Supports resolve via Container.
 * Works in subfolders.
 
 ## Requirements
@@ -32,10 +33,11 @@ Before defining the application routes, it is necessary to create the following 
 ```php
 use Embryo\Container\Container;
 use Embryo\Http\Emitter\Emitter;
-use Embryo\Http\Factory\ServerRequestFactory;
-use Embryo\Http\Factory\ResponseFactory;
+use Embryo\Http\Factory\{ServerRequestFactory, ResponseFactory};
 use Embryo\Http\Server\RequestHandler;
 use Embryo\Routing\Router;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 $container      = new Container;
 $request        = (new ServerRequestFactory)->createServerRequestFromServer();
@@ -47,8 +49,9 @@ Later, you can define the routes with `Router` object:
 ```php
 $router = new Router;
 
-$router->get('/', function($request, $response){
-    return $response->write('Hello World!');
+$router->get('/', function(Request $request, Response $response){
+    $response->getBody()->write('Hello World!');
+    return $response;
 });
 ```
 Now, create PSR-15 middleware queue adding required routing middlewares:
@@ -74,6 +77,7 @@ $emitter->emit($response);
 * [Create route groups](#create-route-group)
 * [Add middleware to route](#add-middleware-to-route)
 * [Resolve via Container](#resolve-via-container)
+* [Set default namespace](#set-default-namespace)
 * [Working in subfolder](#working-in-subdirectory)
 
 ### Create routes
@@ -82,8 +86,9 @@ You can define application routes using methods on the Router object. Every meth
 * The route callback (a closure or a `class@method` string)
 ```php
 // GET Route
-$router->get('/blog/{id}', function($request, $response, $id) {
-    return $response->write('This is post with id '.$id);
+$router->get('/blog/{id}', function(Request $request, Response $response, int $id) {
+    $response->getBody()->write('This is post with id '.$id);
+    return $response;
 });
 ```
 Note that you can write pattern with or without "/" to first character like this: `blog/{id}`.
@@ -93,12 +98,12 @@ Embryo Routing supports GET, POST, PUT, PATCH, DELETE and OPTIONS request method
 You can use `all()` and `map()` methods for supporting all methods or specific route methods.
 ```php
 // All methods
-$router->all('pattern', function($request, $response) {
+$router->all('pattern', function(Request $request, Response $response) {
     //...
 });
 
 // Match methods
-$router->map(['GET', 'POST'], 'pattern', function($request, $response) {
+$router->map(['GET', 'POST'], 'pattern', function(Request $request, Response $response) {
     //...
 });
 ```
@@ -119,17 +124,18 @@ There are three ways you can write content to the HTTP response:
 3. You can return a `json` content when returning an array.
 ```php
 // echo
-$router->get('/hello/{name}', function ($request, $response, $name) {
+$router->get('/hello/{name}', function (Request $request, Response $response, string $name) {
     echo $name;
 });
 
 // response object
-$router->get('/hello/{name}', function ($request, $response, $name) {
-    return $response->write($name);
+$router->get('/hello/{name}', function (Request $request, Response $response, string $name) {
+    $response->getBody()->write($name);
+    return $response;
 });
 
 // json
-$router->get('/hello/{name}', function ($request, $response, $name) {
+$router->get('/hello/{name}', function ($Request $request, Response $response, string $name) {
     return [
         'name' => $name
     ];
@@ -139,15 +145,16 @@ $router->get('/hello/{name}', function ($request, $response, $name) {
 #### Closure binding
 If you use a Closure instance as the route callback, the closure’s state is bound to the `Container` instance. This means you will have access to the DI container instance inside of the Closure via the `$this` keyword:
 ```php
-$router->get('/hello/{name}', function ($request, $response, $name) {
-    $this->get('session')->set('name', $name);
+$router->get('/hello/{name}', function (Request $request, Response $response, string $name) {
+    $myservice = $this->get('myservice');
+    //...
 });
 ```
 
 #### Access to current route
 If you get the route's object, you can it using the request attribute:
 ```php
-$router->get('/hello/{name}', function ($request, $response, $name) {
+$router->get('/hello/{name}', function (Request $request, Response $response, string $name) {
     $route = $request->getAttribute('route');
     echo $route->getUri(); // /hello/name
 });
@@ -159,7 +166,7 @@ Route patterns may use named placeholders to dynamically match HTTP request URI 
 #### Format
 A route pattern placeholder starts with a `{`, followed by the placeholder name, ending with a `}`. Name and value placeholder may be each character from a-z, A-Z, 0-9, including the _ (underscore).
 ```php
-$router->get('/hello/{name}', function ($request, $response, $name) {
+$router->get('/hello/{name}', function (Request $request, Response $response, string $name) {
     echo $name;
 });
 ```
@@ -167,30 +174,32 @@ $router->get('/hello/{name}', function ($request, $response, $name) {
 #### Optional
 To make a placeholder optional, wrap it in square brackets:
 ```php
-$router->get('/hello[/{name}]', function ($request, $response, $name = null) {
+$router->get('/hello[/{name}]', function (Request $request, Response $response, string $name = null) {
     if ($name) {
         echo $name;
     }
+    //...
 });
 ```
 You can use a multiple optional parameters:
 ```php
-$router->get('/blog[/{year}][/{month}][/{day}]', function($request, $response, $year = 2018, $month = 12, $day = 31){
-    return $response->write('Blog! Year: '.$year.', Month: '.$month.', Day: '.$day);
+$router->get('/blog[/{year}][/{month}][/{day}]', function(Request $request, Response $response, int $year = 2018, int $month = 12, int $day = 31){
+    $response->getBody()->write('Blog! Year: '.$year.', Month: '.$month.', Day: '.$day);
+    return $response;
 });
 ```
-For "slug" optional parameters, you can do this:
+For "simple slug" optional parameters, you can do this:
 ```php
-$router->get('/blog[/{year}][/{slug}]', function($request, $response, $year = 2018, $slug = null){
+$router->get('/blog[/{year}][/{slug}]', function(Request $request, Response $response, int $year = 2018, string $slug = null){
     //...
 })->where('slug', '[\/\w\-]+');
 ```
 In this example, a URI of /`blog/2018/my-post-title` would result in the `$year` (2018) and `$slug` (my-post-title) arguments.
 
 #### Set regex route
-By default the placeholders can accept any character from a-z, A-Z, 0-9, including the _ (underscore). However, placeholders can also require the HTTP request URI to match a particular regular expression. For this, you can use `where()` method:
+By default the placeholders can accept any character allowed for composing an uri with the exception of the `/` character. However, placeholders can also require the HTTP request URI to match a particular regular expression. For this, you can use `where()` method:
 ```php
-$router->get('/blog/{id}/{name}', function($request, $response, $id, $name){
+$router->get('/blog/{id}/{name}', function(Request $request, Response $response, int $id, string $name){
     //...
 })->where([
     'id'   => '[0-9]+',
@@ -201,15 +210,15 @@ $router->get('/blog/{id}/{name}', function($request, $response, $id, $name){
 ### Set name route
 You can be assigned a name at the route with `name()` method:
 ```php
-$router->get('/hello/{name}', function ($request, $response, $name) {
-    echo $name;
+$router->get('/hello/{name}', function (Request $request, Response $response, string $name) {
+    //...
 })->name('route');
 ```
 ### Create route groups
 You can organize routes into logical groups with `group()` method. If you want add a route prefix you can use `prefix()` method:
 ```php
-$router->prefix('/api')->group(function($router){
-    $router->get('/user/{id}', function($request, $response, $id){
+$router->prefix('/api')->group(function($router) {
+    $router->get('/user/{id}', function(Request $request, Response $response, int $id) {
         //...
     });
 });
@@ -222,7 +231,7 @@ You can also attach a PSR-15 middleware to any route or route group.
 #### Route middleware
 You can use the `middleware()` method to assign one or more middleware at the route:
 ```php
-$router->get('/users', function($request, $response){
+$router->get('/users', function(Request $request, Response $response) {
     //...
 })->middleware('App\TestMiddleware1', 'App\TestMiddleware2');
 ```
@@ -230,40 +239,75 @@ $router->get('/users', function($request, $response){
 #### Group middleware
 In addition to the routes, you can assign one or more middleware to a group and to individual routes within the group:
 ```php
-$router->prefix('/api')->middleware('App\GroupMiddlewareTest')->group(function($router){
-    $router->get('/user/{id}', function($request, $response, $id){
+$router->prefix('/api')->middleware('App\GroupMiddlewareTest')->group(function($router) {
+    $router->get('/user/{id}', function(Request $request, Response $response, int $id){
         //...
     })->middleware('App\RouteMiddlewareTest');
 });
 ```
 ### Resolve via Container
-In callback, in addition to closure, you can use the `class@method` string:
+In callback, in addition to closure, you can use the `class@method` string or `['className', 'methodName']` array:
 ```php
+// string
 $router->get('/user/{id}', 'user@getById');
+
+// array
+use Path\To\User;
+
+$router->get('/user/{id}', [User::class, 'geById']);
 ```
-It translates a string entry into a class/method call like this:
+It translates into a class/method call like this:
 ```php
 use Embryo\Routing\Controller;
+use Psr\Http\Message\ResponseInterface;
 
 class User extends Controller
 {
-    public function getById($id)
+    public function getById(int $id): ResponseInterface
     {
-        $this->response->write('The User id is: '.$id);
+        $this->response->getBody()->write('The User id is: '.$id);
+        return $this->response;
+    }
+}
+```
+In this example you will have access to the DI container instance inside of the class via the `$this` keyword. 
+If you want have access to service in container use `$this->get('myservice')`. 
+If you want have access to the request or response instance use `$this->request` and `$this->response`.
+In addition, methods parameters it's may also called using `type-hinting`, which means you can put the class you need in the method and the Service Container will resolve it automatically:
+```php
+use Path\To\MyService;
+use Embryo\Routing\Controller;
+use Psr\Http\Message\ResponseInterface;
+
+class User extends Controller
+{
+    public function getById(MyService $service, int $id): ResponseInterface
+    {
         //...
     }
 }
 ```
-In this example you will have access to the DI container instance inside of the class via the `$this` keyword. If you will have access to the request or response instance use `$this->request` and `$this->response`.
+
+### Set default namespace
+You may to set default namespace for your controllers with `setNamespace()` method:
+```php
+$router = new Router;
+$router->setNamespace('App\\Controller');
+
+$router->get('/', 'PageController@index'); // App\Controller\PageController
+
+//...
+```
 
 ### Working in subfolder
 Embryo Routing can works in a subdirectory by setting the path with `setBasePath()` method:
 ```php
-$router = new Router($requestHandler);
+$router = new Router;
 $router->setBasePath('/path/subdirectory');
 
-$router->get('/', function($request, $response){
-    return $response->write('Hello World!');
+$router->get('/', function(Request $request, Response $response) {
+    $response->getBody()->write('Hello World!');
+    return $response;
 });
 
 //...
