@@ -43,7 +43,7 @@
         private $pattern;
         
         /**
-         * @var string|callable $callback 
+         * @var string|array|\Closure $callback 
          */
         private $callback;
 
@@ -265,14 +265,14 @@
         /**
          * Returns an instance with the specified callback.
          *
-         * @param string|callable $callback
+         * @param string|array|\Closure $callback
          * @return RouteInterface
          * @throws \InvalidArgumentException
          */
         public function withCallback($callback): RouteInterface
         {
-            if (!is_string($callback) && !is_callable($callback)) {
-                throw new \InvalidArgumentException('The callback route must be a string!');
+            if (!is_string($callback) && !is_array($callback) && !$callback instanceof \Closure) {
+                throw new \InvalidArgumentException('The callback route must be a string, an array or an instance of Closure');
             }
 
             $clone = clone $this;
@@ -283,7 +283,7 @@
         /**
          * Returns callback.
          * 
-         * @return string|callable
+         * @return string|array|\Closure
          */
         public function getCallback()
         {

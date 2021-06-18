@@ -32,7 +32,7 @@
         /**
          * @var string $namespace
          */
-        private $namespace = 'App\\Controllers';
+        private $namespace = '';
 
         /**
          * @var array $prefix
@@ -72,7 +72,7 @@
          * GET
          *
          * @param string $pattern
-         * @param mixed $callback
+         * @param string|array|\Closure $callback
          * @return RouteInterface
          */
         public function get(string $pattern, $callback): RouteInterface
@@ -84,7 +84,7 @@
          * POST
          *
          * @param string $pattern
-         * @param mixed $callback
+         * @param string|array|\Closure $callback
          * @return RouteInterface
          */
         public function post(string $pattern, $callback): RouteInterface
@@ -96,7 +96,7 @@
          * PUT
          *
          * @param string $pattern
-         * @param mixed $callback
+         * @param string|array|\Closure $callback
          * @return RouteInterface
          */
         public function put(string $pattern, $callback): RouteInterface
@@ -108,7 +108,7 @@
          * PATCH
          *
          * @param string $pattern
-         * @param mixed $callback
+         * @param string|array|\Closure $callback
          * @return RouteInterface
          */
         public function patch(string $pattern, $callback): RouteInterface
@@ -120,7 +120,7 @@
          * DELETE
          *
          * @param string $pattern
-         * @param mixed $callback
+         * @param string|array|\Closure $callback
          * @return RouteInterface
          */
         public function delete(string $pattern, $callback): RouteInterface
@@ -132,7 +132,7 @@
          * OPTIONS
          *
          * @param string $pattern
-         * @param mixed $callback
+         * @param string|array|\Closure $callback
          * @return RouteInterface
          */
         public function options(string $pattern, $callback): RouteInterface
@@ -145,7 +145,7 @@
          *
          * @param array $methods
          * @param string $pattern
-         * @param mixed $callback
+         * @param string|array|\Closure $callback
          * @return RouteInterface
          */
         public function map(array $methods, string $pattern, $callback): RouteInterface
@@ -157,7 +157,7 @@
          * Create route with all HTTP methods.
          *
          * @param string $pattern
-         * @param mixed $callback
+         * @param string|array|\Closure $callback
          * @return RouteInterface
          */
         public function all(string $pattern, $callback): RouteInterface
@@ -236,7 +236,7 @@
          *
          * @param array $methods
          * @param string $pattern
-         * @param string|callable $callback
+         * @param string|array|\Closure $callback
          * @return RouteInterface
          */
         private function add(array $methods, string $pattern, $callback): RouteInterface

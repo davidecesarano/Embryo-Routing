@@ -50,7 +50,9 @@
             $middleware = $route->getMiddleware();
             $response   = $handler->handle($request);
             
-            if (is_callable($callback)) {
+            if (is_array($callback)) {
+                $resolver = new ControllerResolver($callback);
+            } else if ($callback instanceof \Closure) {
                 $resolver = new CallableResolver($callback);
             } else if (is_string($callback)) {
                 $resolver = new ControllerResolver($callback);
