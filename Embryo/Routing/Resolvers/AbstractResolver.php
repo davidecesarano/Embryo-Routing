@@ -12,7 +12,8 @@
     namespace Embryo\Routing\Resolvers;
 
     use Embryo\Container\Interfaces\ContainerBuilderInterface;
-    use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
+    use Embryo\Http\Message\{Response, ServerRequest};
+    use Psr\Http\Message\{ResponseInterface, ServerRequestInterface};
 
     abstract class AbstractResolver 
     {
@@ -35,15 +36,18 @@
         /**
          * Execute the callable.
          *
-         * @param callable $callable
+         * @param \Closure|array $callable
          * @param array $args
          * @param ResponseInterface $response
          * @return ResponseInterface
          * @throws \UnexpectedValueException
          * @throws \RuntimeException
          */
-        protected function execute(callable $callable, array $args, ResponseInterface $response): ResponseInterface
+        protected function execute($callable, array $args, ResponseInterface $response): ResponseInterface
         { 
+            if (!is_callable($callable)) {
+                throw new \UnexpectedValueException('Callback must be a callable variable');
+            }
             $return = call_user_func_array($callable, $args);
 
             if ($return instanceof ResponseInterface) {
@@ -83,5 +87,20 @@
             $this->container->set('request', function() use($request){
                 return $request;
             });
+            $this->container->alias(ServerRequest::class, 'request');
+        }
+
+        /**
+         * Set processed response in Container.
+         *
+         * @param ResponseInterface $response
+         * @return void
+         */
+        protected function setResponse(ResponseInterface $response)
+        {
+            $this->container->set('response', function() use($response){
+                return $response;
+            });
+            $this->container->alias(Response::class, 'response');
         }
     }

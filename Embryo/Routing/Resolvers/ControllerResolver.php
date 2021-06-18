@@ -23,20 +23,26 @@
         private $namespace;
 
         /**
-         * @var string $controller
+         * @var string|array $controller
          */
         private $controller;
 
         /**
          * Set controller.
          * 
-         * @param string $controller 
+         * @param string|array $controller 
          * @throws \InvalidArgumentException
          */
-        public function __construct(string $controller)
+        public function __construct($controller)
         {
-            if (strpos($controller, '@') === false) {
+            if (!is_string($controller) && !is_array($controller)) {
+                throw new \InvalidArgumentException("Controller must be an array or a string");
+            }
+            if (is_string($controller) && strpos($controller, '@') === false) {
                 throw new \InvalidArgumentException("$controller must be a 'class@method' string");
+            }
+            if (is_array($controller) && count($controller) !== 2) {
+                throw new \InvalidArgumentException("Controller must have two fields");
             }
             $this->controller = $controller;
         }
@@ -62,8 +68,11 @@
          */
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
+            $response = $handler->handle($request);
+
             $this->setRequest($request);
-            $response   = $handler->handle($request);
+            $this->setResponse($response);
+
             $controller = $this->resolve($request, $response);
             $params     = $this->getDefaultValueParameters($controller);
             $args       = $this->setArguments($request, $params);
@@ -81,11 +90,17 @@
          */
         private function resolve(ServerRequestInterface $request, ResponseInterface $response): array
         {
-            $name   = explode('@', $this->controller)[0];
-            $method = explode('@', $this->controller)[1];
-            $class  = $this->namespace.'\\'.$name;
+            if (is_string($this->controller)) {
+                $exp    = explode('@', $this->controller);
+                $name   = $exp[0];
+                $method = $exp[1];
+                $class  = $this->namespace.'\\'.$name;
+            } else {
+                $class = $this->controller[0];
+                $method = $this->controller[1];
+            }
 
-            if (!class_exists($class)) {
+            if (!class_exists((string) $class)) {
                 throw new \RuntimeException("$class class does not exist");
             }
 
@@ -112,7 +127,11 @@
             $ref = new \ReflectionMethod($controller[0], $controller[1]);
             $params = [];
             foreach ($ref->getParameters() as $value) {
-                $params[$value->getName()] = ($value->isDefaultValueAvailable()) ? $value->getDefaultValue() : null;
+                if (is_null($value->getClass())) {
+                    $params[$value->getName()] = ($value->isDefaultValueAvailable()) ? $value->getDefaultValue() : null;
+                } else {
+                    $params[$value->getName()] = $this->container->get($value->getClass()->getName());
+                }
             }
             return $params;
         }
@@ -128,9 +147,11 @@
         {
             $args = [];
             $arguments = $request->getAttribute('route')->getArguments();
-            if (!empty($arguments)) {
-                foreach ($arguments as $name => $argument) {
-                    $args[] = ($argument) ? $argument : $params[$name];
+            foreach ($params as $key => $value) {
+                if (isset($arguments[$key])) {
+                    $args[] = $arguments[$key];
+                } else {
+                    $args[] = $value;
                 }
             }
             return $args;

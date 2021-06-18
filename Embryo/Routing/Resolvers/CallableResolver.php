@@ -18,16 +18,16 @@
     class CallableResolver extends AbstractResolver implements MiddlewareInterface
     {
         /**
-         * @var callable $callable
+         * @var \Closure $callable
          */
         protected $callable;
 
         /**
          * Set callable.
          *
-         * @param callable $callable
+         * @param \Closure $callable
          */
-        public function __construct(callable $callable)
+        public function __construct(\Closure $callable)
         {
             $this->callable = $callable;
         }
@@ -41,8 +41,11 @@
          */
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
-            $this->setRequest($request);
             $response = $handler->handle($request);
+
+            $this->setRequest($request);
+            $this->setResponse($response);
+            
             $closure  = $this->callable;
             $callable = \Closure::bind($closure, $this->container->build());
             $params   = $this->getDefaultValueParameters(); 
