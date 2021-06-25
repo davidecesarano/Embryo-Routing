@@ -226,7 +226,7 @@ $router->prefix('/api')->group(function($router) {
 In this example URI is, for example, /api/user/1.
 
 ### Add middleware to route
-You can also attach a PSR-15 middleware to any route or route group.
+You can also attach a PSR-15 middleware to any route or route group. The `middleware()` method accepts a string, an array or an instance of `Psr\Http\Server\MiddlewareInterface`.
 
 #### Route middleware
 You can use the `middleware()` method to assign one or more middleware at the route:
